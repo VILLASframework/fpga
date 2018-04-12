@@ -34,7 +34,7 @@ find_package(Threads)
 
 add_library(villas-fpga SHARED ${SOURCES})
 
-target_link_libraries(villas-fpga PUBLIC villas-common)
+target_link_libraries(villas-fpga PUBLIC villas-common vtp)
 
 # GPU library is optional, check for CUDA presence
 include(CheckLanguage)

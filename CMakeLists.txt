@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 
 include_directories(thirdparty/spdlog/include)
 
+add_subdirectory(vtp)
 add_subdirectory(lib)
 add_subdirectory(tests)
 
