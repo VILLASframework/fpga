@@ -274,6 +274,20 @@
             "irq_case": "pcie_0_axi_pcie_intc_0:7"
           }
         },
+        "mem_0": {
+          "vlnv": "xilinx.com:hls:mem:1.6",
+          "memory-view": {
+            "m_axi_gmem": {
+              "pcie_0_axi_pcie_0": {
+                "BAR0": {
+                  "baseaddr": 0,
+                  "highaddr": 4294967295,
+                  "size": 4294967296
+                }
+              }
+            }
+          }
+        },
         "pcie_0_axi_pcie_0": {
           "vlnv": "xilinx.com:ip:axi_pcie:2.8",
           "memory-view": {
@@ -350,6 +364,13 @@
                 "Reg": {
                   "baseaddr": 45056,
                   "highaddr": 49151,
+                  "size": 4096
+                }
+              },
+              "mem_0": {
+                "Reg": {
+                  "baseaddr": 57344,
+                  "highaddr": 61439,
                   "size": 4096
                 }
               },

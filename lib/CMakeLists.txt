@@ -14,6 +14,9 @@ set(SOURCES
 	ips/dma.cpp
 	ips/bram.cpp
 
+	ips/hls-mem.cpp
+	ips/src/xmem.c
+
 	kernel/kernel.c
 	kernel/pci.c
 	kernel/vfio.cpp
