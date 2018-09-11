@@ -48,7 +48,7 @@ struct Rtds2GpuMemoryBuffer {
 
 	// HACK: This might break horribly, let's just hope C++17 will be there soon
 	static constexpr size_t dataOffset = 0;
-	static constexpr size_t doorbellOffset = N * sizeof(Rtds2GpuMemoryBuffer::data);
+	static constexpr size_t doorbellOffset = sizeof(Rtds2GpuMemoryBuffer::data);
 
 	T data[N];
 	reg_doorbell_t doorbell;
