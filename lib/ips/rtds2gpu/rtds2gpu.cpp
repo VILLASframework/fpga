@@ -38,6 +38,10 @@ void Rtds2Gpu::dump(spdlog::level::level_enum logLevel)
 	const auto doorbell_offset = XRtds2gpu_Get_doorbell_offset(&xInstance);
 	const auto frame_size = XRtds2gpu_Get_frame_size(&xInstance);
 
+	if(not updateStatus()) {
+		logger->warn("Couldn't read status register (not ready), values may be wrong");
+	}
+
 	logger->log(logLevel, "Rtds2Gpu registers (IP base {:#x}):", xInstance.Ctrl_BaseAddress);
 	logger->log(logLevel, "  Base address (bytes):     {:#x}", baseaddr);
 	logger->log(logLevel, "  Doorbell offset (bytes):  {:#x}", doorbell_offset);
