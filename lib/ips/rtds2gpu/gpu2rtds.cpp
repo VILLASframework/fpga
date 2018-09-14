@@ -51,9 +51,9 @@ void Gpu2Rtds::dump(spdlog::level::level_enum logLevel)
 	logger->log(logLevel, "    Frame too short:    {}", (status.frame_too_short ? "yes" : "no"));
 	logger->log(logLevel, "    Frame too long:     {}", (status.frame_too_long ? "yes" : "no"));
 	logger->log(logLevel, "    Frame size invalid: {}", (status.invalid_frame_size ? "yes" : "no"));
-	logger->log(logLevel, "    Last count:         {}", status.last_count);
+	logger->log(logLevel, "    Last count:         {}", getStatusLastCount(status));
 	logger->log(logLevel, "    Last seq. number:   {}", status.last_seq_nr);
-	logger->log(logLevel, "    Max. frame size:    {}", status.max_frame_size);
+	logger->log(logLevel, "    Max. frame size:    {}", getStatusMaxFrameSize(status));
 }
 
 //bool Gpu2Rtds::startOnce(const MemoryBlock& mem, size_t frameSize, size_t dataOffset, size_t doorbellOffset)
@@ -118,7 +118,7 @@ Gpu2Rtds::getMaxFrameSize()
 
 //	assert(status.max_frame_size == (*registerStatus).max_frame_size);
 
-	return status.max_frame_size;
+	return getStatusMaxFrameSize(status);
 }
 
 //void

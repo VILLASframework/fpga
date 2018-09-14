@@ -19,6 +19,29 @@ union axilite_reg_status_t {
 	};
 };
 
+
+/*
+ * Access functions for status register to handle offset in register
+ * representation because of size constraints.
+*/
+
+static inline void
+setStatusMaxFrameSize(volatile axilite_reg_status_t& reg, uint32_t value)
+{ reg.max_frame_size = value - 1; }
+
+static inline void
+setStatusLastCount(volatile axilite_reg_status_t& reg, uint32_t value)
+{ reg.last_count = value - 1; }
+
+static inline uint32_t
+getStatusLastCount(const volatile axilite_reg_status_t& reg)
+{ return reg.last_count + 1; }
+
+static inline uint32_t
+getStatusMaxFrameSize(const volatile axilite_reg_status_t& reg)
+{ return reg.max_frame_size + 1; }
+
+
 union reg_doorbell_t {
 	uint32_t value;
 	struct {
@@ -30,6 +53,24 @@ union reg_doorbell_t {
 
 	constexpr reg_doorbell_t() : value(0) {}
 };
+
+
+
+/*
+ * Access functions for doorbell register to handle offset in register
+ * representation because of size constraints.
+*/
+
+
+static inline void
+setDoorbellCount(volatile reg_doorbell_t& reg, uint32_t value)
+{ reg.count = value - 1; }
+
+static inline uint32_t
+getDoorbellCount(const volatile reg_doorbell_t& reg)
+{ return reg.count + 1; }
+
+
 
 template<size_t N, typename T = uint32_t>
 struct Rtds2GpuMemoryBuffer {

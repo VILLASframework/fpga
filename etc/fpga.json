@@ -341,7 +341,7 @@
           "num_ports": 8
         },
         "hier_0_gpu2rtds_0": {
-          "vlnv": "acs.eonerc.rwth-aachen.de:hls:gpu2rtds:1.0",
+          "vlnv": "acs.eonerc.rwth-aachen.de:hls:gpu2rtds:1.2",
           "ports": [
             {
               "role": "master",
@@ -369,7 +369,7 @@
           }
         },
         "hier_0_rtds2gpu_0": {
-          "vlnv": "acs.eonerc.rwth-aachen.de:hls:rtds2gpu:1.1",
+          "vlnv": "acs.eonerc.rwth-aachen.de:hls:rtds2gpu:1.2",
           "memory-view": {
             "m_axi_axi_mm": {
               "pcie_0_axi_pcie_0": {
