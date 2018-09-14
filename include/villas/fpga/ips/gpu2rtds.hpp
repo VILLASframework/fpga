@@ -19,7 +19,7 @@ public:
 
 	bool init();
 
-	void dump(spdlog::level::level_enum logLevel = spdlog::level::info);
+	bool dump(spdlog::level::level_enum logLevel = spdlog::level::info);
 	bool startOnce(size_t frameSize);
 
 	size_t getMaxFrameSize();

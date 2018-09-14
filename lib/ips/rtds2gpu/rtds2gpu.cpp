@@ -31,7 +31,7 @@ bool Rtds2Gpu::init()
 
 
 
-void Rtds2Gpu::dump(spdlog::level::level_enum logLevel)
+bool Rtds2Gpu::dump(spdlog::level::level_enum logLevel)
 {
 	const auto baseaddr = XRtds2gpu_Get_baseaddr(&xInstance);
 	const auto data_offset = XRtds2gpu_Get_data_offset(&xInstance);
@@ -40,6 +40,7 @@ void Rtds2Gpu::dump(spdlog::level::level_enum logLevel)
 
 	if(not updateStatus()) {
 		logger->warn("Couldn't read status register (not ready), values may be wrong");
+		return false;
 	}
 
 	logger->log(logLevel, "Rtds2Gpu registers (IP base {:#x}):", xInstance.Ctrl_BaseAddress);
@@ -55,6 +56,8 @@ void Rtds2Gpu::dump(spdlog::level::level_enum logLevel)
 	logger->log(logLevel, "    Last count:         {}", getStatusLastCount(status));
 	logger->log(logLevel, "    Last seq. number:   {}", status.last_seq_nr);
 	logger->log(logLevel, "    Max. frame size:    {}", getStatusMaxFrameSize(status));
+
+	return true;
 }
 
 bool Rtds2Gpu::startOnce(const MemoryBlock& mem, size_t frameSize, size_t dataOffset, size_t doorbellOffset)

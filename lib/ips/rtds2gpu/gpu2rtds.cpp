@@ -39,7 +39,7 @@ Gpu2Rtds::startOnce(size_t frameSize)
 	return true;
 }
 
-void Gpu2Rtds::dump(spdlog::level::level_enum logLevel)
+bool Gpu2Rtds::dump(spdlog::level::level_enum logLevel)
 {
 	const auto frame_size = *registerFrameSize;
 	auto status = *registerStatus;
@@ -54,6 +54,8 @@ void Gpu2Rtds::dump(spdlog::level::level_enum logLevel)
 	logger->log(logLevel, "    Last count:         {}", getStatusLastCount(status));
 	logger->log(logLevel, "    Last seq. number:   {}", status.last_seq_nr);
 	logger->log(logLevel, "    Max. frame size:    {}", getStatusMaxFrameSize(status));
+
+	return true;
 }
 
 //bool Gpu2Rtds::startOnce(const MemoryBlock& mem, size_t frameSize, size_t dataOffset, size_t doorbellOffset)
