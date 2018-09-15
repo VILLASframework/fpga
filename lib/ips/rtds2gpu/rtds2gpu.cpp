@@ -47,7 +47,7 @@ bool Rtds2Gpu::dump(spdlog::level::level_enum logLevel)
 	logger->log(logLevel, "  Base address (bytes):     {:#x}", baseaddr);
 	logger->log(logLevel, "  Doorbell offset (bytes):  {:#x}", doorbell_offset);
 	logger->log(logLevel, "  Data offset (bytes):      {:#x}", data_offset);
-	logger->log(logLevel, "  Frame size (words):       {:#x}", frame_size);
+	logger->log(logLevel, "  Frame size (words):       {}", frame_size);
 	logger->log(logLevel, "  Status:                   {:#x}", status.value);
 	logger->log(logLevel, "    Running:            {}", (status.is_running ? "yes" : "no"));
 	logger->log(logLevel, "    Frame too short:    {}", (status.frame_too_short ? "yes" : "no"));

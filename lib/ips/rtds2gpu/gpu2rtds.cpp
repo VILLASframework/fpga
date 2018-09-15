@@ -45,7 +45,7 @@ bool Gpu2Rtds::dump(spdlog::level::level_enum logLevel)
 	auto status = *registerStatus;
 
 	logger->log(logLevel, "Gpu2Rtds registers:");
-	logger->log(logLevel, "  Frame size (words):       {:#x}", frame_size);
+	logger->log(logLevel, "  Frame size (words):       {}", frame_size);
 	logger->log(logLevel, "  Status:                   {:#x}", status.value);
 	logger->log(logLevel, "    Running:            {}", (status.is_running ? "yes" : "no"));
 	logger->log(logLevel, "    Frame too short:    {}", (status.frame_too_short ? "yes" : "no"));
