@@ -32,7 +32,10 @@ public:
 
 	bool init();
 
-	bool dump(spdlog::level::level_enum logLevel = spdlog::level::info);
+	void dump()
+	{ dumpLog(); }
+
+	bool dumpLog(spdlog::level::level_enum logLevel = spdlog::level::info);
 
 	bool startOnce(const MemoryBlock& mem, size_t frameSize, size_t dataOffset, size_t doorbellOffset);
 

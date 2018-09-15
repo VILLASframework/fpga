@@ -99,8 +99,8 @@ Test(fpga, rtds2gpu_loopback_dma, .description = "Rtds2Gpu")
 		cr_assert_not_null(gpu2rtds, "No Gpu2Rtds IP found");
 		cr_assert_not_null(rtds, "RTDS IP not found");
 
-		rtds2gpu.dump(spdlog::level::debug);
-		gpu2rtds->dump(spdlog::level::debug);
+		rtds2gpu.dumpLog(spdlog::level::debug);
+		gpu2rtds->dumpLog(spdlog::level::debug);
 
 
 		/* Allocate and prepare memory */
@@ -139,7 +139,7 @@ Test(fpga, rtds2gpu_loopback_dma, .description = "Rtds2Gpu")
 		while(not rtds2gpu.isFinished());
 
 		const uint32_t* doorbellDst = &dmaMemDst[DOORBELL_OFFSET];
-		rtds2gpu.dump(spdlog::level::info);
+		rtds2gpu.dumpLog(spdlog::level::info);
 		rtds2gpu.dumpDoorbell(*doorbellDst);
 
 		cr_assert(memcmp(dataSrc, dataDst, FRAME_SIZE) == 0, "Memory not equal");

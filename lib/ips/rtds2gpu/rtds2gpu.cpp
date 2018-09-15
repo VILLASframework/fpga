@@ -31,7 +31,7 @@ bool Rtds2Gpu::init()
 
 
 
-bool Rtds2Gpu::dump(spdlog::level::level_enum logLevel)
+bool Rtds2Gpu::dumpLog(spdlog::level::level_enum logLevel)
 {
 	const auto baseaddr = XRtds2gpu_Get_baseaddr(&xInstance);
 	const auto data_offset = XRtds2gpu_Get_data_offset(&xInstance);

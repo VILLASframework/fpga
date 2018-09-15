@@ -39,7 +39,7 @@ Gpu2Rtds::startOnce(size_t frameSize)
 	return true;
 }
 
-bool Gpu2Rtds::dump(spdlog::level::level_enum logLevel)
+bool Gpu2Rtds::dumpLog(spdlog::level::level_enum logLevel)
 {
 	const auto frame_size = *registerFrameSize;
 	auto status = *registerStatus;
