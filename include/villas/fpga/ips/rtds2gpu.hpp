@@ -43,6 +43,10 @@ public:
 	bool doorbellIsValid(const uint32_t& doorbellRegister) const
 	{ return reinterpret_cast<const reg_doorbell_t&>(doorbellRegister).is_valid; }
 
+	const axilite_reg_status_t&
+	getStatusRegister()
+	{ updateStatus(); return status; }
+
 	void doorbellReset(uint32_t& doorbellRegister) const
 	{ doorbellRegister = 0; }
 
