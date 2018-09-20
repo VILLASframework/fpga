@@ -148,13 +148,6 @@ MemoryManager::pathCheck(const MemoryGraph::Path& path)
 	return true;
 }
 
-uintptr_t
-MemoryTranslation::getLocalAddr(uintptr_t addrInForeignAddrSpace) const
-{
-	assert(addrInForeignAddrSpace >= dst);
-	assert(addrInForeignAddrSpace < (dst + size));
-	return src + addrInForeignAddrSpace - dst;
-}
 
 uintptr_t
 MemoryTranslation::getForeignAddr(uintptr_t addrInLocalAddrSpace) const

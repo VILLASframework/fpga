@@ -30,8 +30,14 @@ public:
 	MemoryTranslation(uintptr_t src, uintptr_t dst, size_t size) :
 	    src(src), dst(dst), size(size) {}
 
-	uintptr_t
-	getLocalAddr(uintptr_t addrInForeignAddrSpace) const;
+	template<typename ReturnType = uintptr_t>
+	ReturnType
+	getLocalAddr(uintptr_t addrInForeignAddrSpace) const
+	{
+		assert(addrInForeignAddrSpace >= dst);
+		assert(addrInForeignAddrSpace < (dst + size));
+		return reinterpret_cast<ReturnType>(src + addrInForeignAddrSpace - dst);
+	}
 
 	uintptr_t
 	getForeignAddr(uintptr_t addrInLocalAddrSpace) const;
