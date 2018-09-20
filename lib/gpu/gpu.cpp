@@ -358,6 +358,9 @@ Gpu::translate(const MemoryBlock& dst)
 	return mm.getTranslation(masterPciEAddrSpaceId, dst.getAddrSpaceId());
 }
 
+static long roundUp(long n, long m) {
+	return n >= 0 ? ((n + m - 1) / m) * m : (n / m) * m;
+}
 
 std::unique_ptr<villas::MemoryBlock, villas::MemoryBlock::deallocator_fn>
 GpuAllocator::allocateBlock(size_t size)
@@ -382,7 +385,8 @@ GpuAllocator::allocateBlock(size_t size)
 		// allocate a new chunk
 
 		// rounded-up multiple of GPU page size
-		const size_t chunkSize = size - (size & (GpuPageSize - 1)) + GpuPageSize;
+		const size_t chunkSize = roundUp(size, GpuPageSize);
+
 		logger->debug("Allocate new chunk of {:#x} bytes", chunkSize);
 
 		if(cudaSuccess != cudaMalloc(&addr, chunkSize)) {
