@@ -31,5 +31,24 @@ tokenize(std::string s, std::string delimiter)
 	return tokens;
 }
 
+std::string
+join(std::vector<std::string> strings, std::string delimiter)
+{
+	std::string out;
+
+	for(size_t i = 0; i < strings.size(); i++) {
+		const auto& s = strings[i];
+
+		if(s.length() > 0) {
+			out += strings[i];
+
+			if(i < (strings.size() - 1) and strings[i+1].length() > 0)
+				out += delimiter;
+		}
+	}
+
+	return out;
+}
+
 } // namespace utils
 } // namespace villas

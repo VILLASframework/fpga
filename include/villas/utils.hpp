@@ -9,6 +9,8 @@ namespace utils {
 std::vector<std::string>
 tokenize(std::string s, std::string delimiter);
 
+std::string
+join(std::vector<std::string> strings, std::string delimiter);
 
 template<typename T>
 void
