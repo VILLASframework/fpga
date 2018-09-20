@@ -30,6 +30,9 @@ GpuAllocator::GpuAllocator(Gpu& gpu) :
 		if(cudaFree(reinterpret_cast<void*>(mem->getOffset())) != cudaSuccess) {
 			logger->warn("cudaFree() failed for {:#x} of size {:#x}",
 			             mem->getOffset(), mem->getSize());
+		} else {
+			logger->debug("cudaFree({:#x}) successfull (size was {:#x})",
+			              mem->getOffset(), mem->getSize());
 		}
 
 		removeMemoryBlock(*mem);
