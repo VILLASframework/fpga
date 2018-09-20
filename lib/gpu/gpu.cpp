@@ -271,16 +271,16 @@ bool Gpu::makeAccessibleToPCIeAndVA(const MemoryBlock& mem)
 	                 mm.getProcessAddressSpace(), mem.getAddrSpaceId());
 
 	// retrieve bus address
-	uint64_t addr[8];
-	ret = gdr_map_dma(pImpl->gdr, mh, 3, 0, 0, addr, 8);
+	static constexpr size_t maxDmaAddresses = 1 << 10;
+	uint64_t addr[maxDmaAddresses];
+	ret = gdr_map_dma(pImpl->gdr, mh, 3, 0, 0, addr, maxDmaAddresses);
 
 	for(int i = 0; i < ret; i++) {
 		logger->debug("DMA addr[{}]:      {:#x}", i, addr[i]);
 	}
 
 	if(ret != 1) {
-		logger->error("Only one DMA address per block supported at the moment");
-		return false;
+		logger->warn("Only one DMA address per block supported at the moment, use first");
 	}
 
 	// mapping to access memory block from peer devices via PCIe
