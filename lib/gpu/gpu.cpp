@@ -273,6 +273,10 @@ bool Gpu::makeAccessibleToPCIeAndVA(const MemoryBlock& mem)
 	// retrieve bus address
 	static constexpr size_t maxDmaAddresses = 1 << 10;
 	uint64_t addr[maxDmaAddresses];
+	// WARNING: PCI slot of FPGA hardcoded here! In the end this is fed into the
+	//          Nvidia kernel module and god knows what happens if we provide
+	//          an invalid pci dev here. At least there is no documention. The
+	//          BAR address should not be any different, but ... ?!
 	ret = gdr_map_dma(pImpl->gdr, mh, 3, 0, 0, addr, maxDmaAddresses);
 
 	for(int i = 0; i < ret; i++) {
