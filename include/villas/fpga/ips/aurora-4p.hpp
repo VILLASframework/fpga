@@ -1,8 +1,8 @@
-/** Driver for wrapper around Aurora (acs.eonerc.rwth-aachen.de:user:aurora_axis)
+/** Driver for wrapper around Quad Port Aurora (acs.eonerc.rwth-aachen.de:user:aurora_4p_axis)
  *
  * @file
- * @author Hatim Kanchwala <hatim@hatimak.me>
- * @copyright 2020, Hatim Kanchwala
+ * @author Steffen Vogel <svogel2@eoenrc.rwth-aachen.de>
+ * @copyright 2017-2020, Institute for Automation of Complex Power Systems, EONERC
  * @license GNU General Public License (version 3)
  *
  * VILLASfpga
@@ -33,10 +33,8 @@ namespace villas {
 namespace fpga {
 namespace ip {
 
-class Aurora : public Node {
+class Aurora4P : public Node {
 public:
-	static constexpr const char* masterPort = "m_axis";
-	static constexpr const char* slavePort = "s_axis";
 
 	void dump();
 
@@ -45,20 +43,22 @@ public:
 
 	const StreamVertex&
 	getDefaultSlavePort() const
-	{ return getSlavePort(slavePort); }
+	{ return getSlavePort("s_axis0"); }
 
 	const StreamVertex&
 	getDefaultMasterPort() const
-	{ return getMasterPort(masterPort); }
+	{ return getMasterPort("m_axis0"); }
 
 	void
-	setLoopback(bool state);
+	setLoopback(int index, bool state);
 
 	void
 	resetFrameCounters();
 
 private:
 	static constexpr const char registerMemory[] = "reg0";
+
+	std::vector<Aurora *> ports;
 };
 
 
@@ -66,11 +66,18 @@ class AuroraFactory : public NodeFactory {
 public:
 
 	Core* create()
-	{ return new Aurora; }
+	{
+		auto *a =  new Aurora4P;
+
+		for (int i = 0; i < 4; i++)
+			a->ports.push_back(new Aurora);
+
+		return a;
+	}
 
 	virtual std::string
 	getName() const
-	{ return "Aurora"; }
+	{ return "Aurora 4P"; }
 
 	virtual std::string
 	getDescription() const
@@ -78,7 +85,7 @@ public:
 
 	virtual Vlnv
 	getCompatibleVlnv() const
-	{ return {"acs.eonerc.rwth-aachen.de:user:aurora_axis:"}; }
+	{ return {"acs.eonerc.rwth-aachen.de:user:aurora_4p_axis:"}; }
 
 };
 

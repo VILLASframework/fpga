@@ -1,4 +1,4 @@
-/** Driver for wrapper around Aurora (acs.eonerc.rwth-aachen.de:user:aurora)
+/** Driver for wrapper around Aurora (acs.eonerc.rwth-aachen.de:user:aurora_axis)
  *
  * @author Hatim Kanchwala <hatim@hatimak.me>
  * @copyright 2020, Hatim Kanchwala
