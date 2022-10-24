@@ -136,7 +136,7 @@ protected:
 class PCIeCardFactory : public plugin::Plugin {
 public:
 
-	static Card::List
+	static PCIeCard::List
 	make(json_t *json, std::shared_ptr<kernel::pci::DeviceList> pci, std::shared_ptr<kernel::vfio::Container> vc);
 
 	static PCIeCard*
@@ -172,3 +172,5 @@ public:
 
 } /* namespace fpga */
 } /* namespace villas */
+
+/** @} */
