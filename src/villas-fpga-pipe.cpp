@@ -36,7 +36,7 @@
 #include <villas/utils.hpp>
 
 #include <villas/fpga/core.hpp>
-#include <villas/fpga/card.hpp>
+#include <villas/fpga/fpgaDevice.hpp>
 #include <villas/fpga/vlnv.hpp>
 #include <villas/fpga/ips/dma.hpp>
 #include <villas/fpga/ips/rtds.hpp>
@@ -67,7 +67,7 @@ void setupColorHandling()
 	});
 }
 
-std::shared_ptr<fpga::PCIeCard>
+std::shared_ptr<fpga::FpgaDevice>
 setupFpgaCard(const std::string &configFile, const std::string &fpgaName)
 {
 	pciDevices = std::make_shared<kernel::pci::DeviceList>();
@@ -95,7 +95,7 @@ setupFpgaCard(const std::string &configFile, const std::string &fpgaName)
 	}
 
 	// Get the FPGA card plugin
-	auto fpgaCardFactory = plugin::registry->lookup<fpga::PCIeCardFactory>("pcie");
+	auto fpgaCardFactory = plugin::registry->lookup<fpga::FpgaDeviceFactory>("pcie");
 	if (fpgaCardFactory == nullptr) {
 		logger->error("No FPGA plugin found");
 		exit(1);
@@ -104,7 +104,7 @@ setupFpgaCard(const std::string &configFile, const std::string &fpgaName)
 	// Create all FPGA card instances using the corresponding plugin
 	auto cards = fpgaCardFactory->make(fpgas, pciDevices, vfioContainer);
 
-	std::shared_ptr<fpga::PCIeCard> card;
+	std::shared_ptr<fpga::FpgaDevice> card;
 	for (auto &fpgaCard : cards) {
 		if (fpgaCard->name == fpgaName) {
 			return fpgaCard;

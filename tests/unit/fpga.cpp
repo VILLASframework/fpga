@@ -24,7 +24,7 @@
 
 #include <villas/utils.hpp>
 #include <villas/fpga/core.hpp>
-#include <villas/fpga/card.hpp>
+#include <villas/fpga/fpgaDevice.hpp>
 #include <villas/fpga/vlnv.hpp>
 
 #include "global.hpp"
@@ -73,7 +73,7 @@ static void init()
 	cr_assert(json_object_size(json) > 0, "No FPGAs defined in config");
 
 	// Get the FPGA card plugin
-	auto fpgaCardFactory = plugin::registry->lookup<fpga::PCIeCardFactory>("pcie");
+	auto fpgaCardFactory = plugin::registry->lookup<fpga::FpgaDeviceFactory>("fpgaDeviceFactory");
 	cr_assert_not_null(fpgaCardFactory, "No plugin for FPGA card found");
 
 	// Create all FPGA card instances using the corresponding plugin

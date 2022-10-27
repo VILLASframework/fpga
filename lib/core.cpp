@@ -50,7 +50,7 @@ vlnvInitializationOrder = {
 };
 
 Core::List
-CoreFactory::make(PCIeCard* card, json_t *json_ips)
+CoreFactory::make(FpgaDevice* card, json_t *json_ips)
 {
 	// We only have this logger until we know the factory to build an IP with
 	auto loggerStatic = getStaticLogger();

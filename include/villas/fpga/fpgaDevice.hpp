@@ -24,6 +24,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *********************************************************************************/
 
+/** @addtogroup fpga VILLASfpga
+ * @{
+ */
+
 #pragma once
 
 #include <list>
@@ -40,50 +44,28 @@
 #include <villas/fpga/config.h>
 #include <villas/fpga/core.hpp>
 
-#include <villas/fpga/fpgaDevice.hpp>
-
 namespace villas {
 namespace fpga {
 
 // Forward declarations
 struct vfio_container;
-class PCIeCardFactory;
+class FpgaDeviceFactory;
 
-class Card {
+class FpgaDevice{
 public:
 
-	using Ptr = std::shared_ptr<PCIeCard>;
+	using Ptr = std::shared_ptr<FpgaDevice>;
 	using List = std::list<Ptr>;
 
-	friend PCIeCardFactory;
-};
+	friend FpgaDeviceFactory;
 
-class PCIeCard : public Card {
-public:
-
-	~PCIeCard();
+	~FpgaDevice();
 
 	bool init();
-
-	bool stop()
-	{
-		return true;
-	}
-
-	bool check()
-	{
-		return true;
-	}
-
-	bool reset()
-	{
-		// TODO: Try via sysfs?
-		// echo 1 > /sys/bus/pci/devices/0000\:88\:00.0/reset
-		return true;
-	}
-
-	void dump()
-	{ }
+	bool stop()  { return true; }
+	bool check() { return true; }
+	bool reset() { return true; }
+	void dump()  { }
 
 	ip::Core::Ptr
 	lookupIp(const std::string &name) const;
@@ -93,6 +75,7 @@ public:
 
 	ip::Core::Ptr
 	lookupIp(const ip::IpIdentifier &id) const;
+
 
 	bool
 	mapMemoryBlock(const MemoryBlock &block);
@@ -106,7 +89,6 @@ public:	// TODO: make this private
 
 	bool doReset;					// Reset VILLASfpga during startup?
 	int affinity;					// Affinity for MSI interrupts
-	bool polling;					// Poll on interrupts?
 
 	std::string name;				// The name of the FPGA card
 
@@ -128,47 +110,37 @@ public:	// TODO: make this private
 protected:
 	Logger
 	getLogger() const
-	{
-		return villas::logging.get(name);
-	}
+	{ return villas::logging.get(name); }
 
 	Logger logger;
 };
 
-class PCIeCardFactory : public FpgaDeviceFactory {
+class FpgaDeviceFactory : public plugin::Plugin {
 public:
 
-	static PCIeCard::List
+	static FpgaDevice::List
 	make(json_t *json, std::shared_ptr<kernel::pci::DeviceList> pci, std::shared_ptr<kernel::vfio::Container> vc);
 
-	static PCIeCard*
+	static FpgaDevice*
 	create()
-	{
-		return new PCIeCard();
-	}
+	{ return new FpgaDevice(); }
 
 	static Logger
 	getStaticLogger()
-	{
-		return villas::logging.get("pcie:card:factory");
-	}
+	{ return villas::logging.get("pcie:card:factory"); } // TODO: New Logger
 
 	virtual std::string
 	getName() const
-	{
-		return "pcie";
-	}
+	{ return "fpgaDeviceFactory"; }
 
 	virtual std::string
 	getDescription() const
-	{
-		return "Xilinx PCIe FPGA cards";
-	}
+	{ return "Abstract fpga device"; }
 
 	virtual
 	std::string getType() const
 	{
-		return "card";
+		return "fpgaDevice";
 	}
 };
 

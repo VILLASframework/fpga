@@ -42,7 +42,7 @@ namespace villas {
 namespace fpga {
 
 // Forward declarations
-class PCIeCard;
+class FpgaDevice;
 
 namespace ip {
 
@@ -268,8 +268,8 @@ protected:
 	// Specialized logger instance with the IPs name set as category
 	Logger logger;
 
-	// FPGA card this IP is instantiated on (populated by FpgaIpFactory)
-	PCIeCard* card;
+	// FPGA device
+	FpgaDevice* card;
 
 	// Identifier of this IP with its instance name and VLNV
 	IpIdentifier id;
@@ -293,7 +293,7 @@ public:
 
 	// Returns a running and checked FPGA IP
 	static Core::List
-	make(PCIeCard* card, json_t *json_ips);
+	make(FpgaDevice* card, json_t *json_ips);
 
 	virtual
 	std::string getType() const
