@@ -5,7 +5,8 @@
  * @file
  * @author Steffen Vogel <stvogel@eonerc.rwth-aachen.de>
  * @author Daniel Krebs <github@daniel-krebs.net>
- * @copyright 2017-2022, Institute for Automation of Complex Power Systems, EONERC
+ * @copyright 2017-2022, Institute for Automation of Complex Power Systems,
+ *EONERC
  * @license GNU General Public License (version 3)
  *
  * VILLASfpga
@@ -30,13 +31,13 @@
 
 #pragma once
 
+#include <jansson.h>
 #include <list>
 #include <set>
 #include <string>
-#include <jansson.h>
 
-#include <villas/plugin.hpp>
 #include <villas/memory.hpp>
+#include <villas/plugin.hpp>
 
 #include <villas/kernel/pci.hpp>
 #include <villas/kernel/vfio.hpp>
@@ -44,107 +45,40 @@
 #include <villas/fpga/config.h>
 #include <villas/fpga/core.hpp>
 
-namespace villas {
-namespace fpga {
+namespace villas
+{
+namespace fpga
+{
 
-// Forward declarations
-struct vfio_container;
-class FpgaDeviceFactory;
+class FpgaDevice
+{
+    public:
+        ip::Core::List ips;
 
-class FpgaDevice{
-public:
+        // The VFIO container that this card is part of
+        std::shared_ptr<kernel::vfio::Container> vfioContainer;
 
-	using Ptr = std::shared_ptr<FpgaDevice>;
-	using List = std::list<Ptr>;
+        // The VFIO device that represents this card
+        kernel::vfio::Device* vfioDevice;
 
-	friend FpgaDeviceFactory;
+		// Slave address space ID to access the PCIe address space from the FPGA
+		MemoryManager::AddressSpaceId addrSpaceIdDeviceToHost;
 
-	~FpgaDevice();
+        // Address space identifier of the master address space of this FPGA
+        // card. This will be used for address resolution of all IPs on this
+        // card.
+        MemoryManager::AddressSpaceId addrSpaceIdHostToDevice;
 
-	bool init();
-	bool stop()  { return true; }
-	bool check() { return true; }
-	bool reset() { return true; }
-	void dump()  { }
+		//kernel::vfio::Device* vfioDevice;
 
-	ip::Core::Ptr
-	lookupIp(const std::string &name) const;
-
-	ip::Core::Ptr
-	lookupIp(const Vlnv &vlnv) const;
-
-	ip::Core::Ptr
-	lookupIp(const ip::IpIdentifier &id) const;
-
-
-	bool
-	mapMemoryBlock(const MemoryBlock &block);
-
-private:
-	// Cache a set of already mapped memory blocks
-	std::set<MemoryManager::AddressSpaceId> memoryBlocksMapped;
-
-public:	// TODO: make this private
-	ip::Core::List ips;				// IPs located on this FPGA card
-
-	bool doReset;					// Reset VILLASfpga during startup?
-	int affinity;					// Affinity for MSI interrupts
-
-	std::string name;				// The name of the FPGA card
-
-	std::shared_ptr<kernel::pci::Device> pdev;	// PCI device handle
-
-	// The VFIO container that this card is part of
-	std::shared_ptr<kernel::vfio::Container> vfioContainer;
-
-	// The VFIO device that represents this card
-	kernel::vfio::Device* vfioDevice;
-
-	// Slave address space ID to access the PCIe address space from the FPGA
-	MemoryManager::AddressSpaceId addrSpaceIdDeviceToHost;
-
-	// Address space identifier of the master address space of this FPGA card.
-	// This will be used for address resolution of all IPs on this card.
-	MemoryManager::AddressSpaceId addrSpaceIdHostToDevice;
-
-protected:
-	Logger
-	getLogger() const
-	{ return villas::logging.get(name); }
-
-	Logger logger;
+        ip::Core::Ptr lookupIp(const std::string &name) const;
 };
 
-class FpgaDeviceFactory : public plugin::Plugin {
-public:
-
-	static FpgaDevice::List
-	make(json_t *json, std::shared_ptr<kernel::pci::DeviceList> pci, std::shared_ptr<kernel::vfio::Container> vc);
-
-	static FpgaDevice*
-	create()
-	{ return new FpgaDevice(); }
-
-	static Logger
-	getStaticLogger()
-	{ return villas::logging.get("pcie:card:factory"); } // TODO: New Logger
-
-	virtual std::string
-	getName() const
-	{ return "fpgaDeviceFactory"; }
-
-	virtual std::string
-	getDescription() const
-	{ return "Abstract fpga device"; }
-
-	virtual
-	std::string getType() const
-	{
-		return "fpgaDevice";
-	}
+class FpgaDeviceFactory : public plugin::Plugin
+{
+    public:
 };
-
-} /* namespace fpga */
-} /* namespace villas */
+}
+}
 
 /** @} */
