@@ -39,7 +39,7 @@ public:
 
 	~InterruptController();
 
-	bool init();
+	bool init() override;
 
 	bool enableInterrupt(IrqMaskType mask, bool polling);
 	bool enableInterrupt(IrqPort irq, bool polling)
