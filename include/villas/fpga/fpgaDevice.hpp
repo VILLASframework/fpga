@@ -53,25 +53,57 @@ namespace fpga
 class FpgaDevice
 {
     public:
-        ip::Core::List ips;
+        virtual ~FpgaDevice();
 
-        // The VFIO container that this card is part of
-        std::shared_ptr<kernel::vfio::Container> vfioContainer;
+// 	bool init();
+// 	bool stop()  { return true; }
+// 	bool check() { return true; }
+// 	bool reset() { return true; }
+// 	void dump()  { }
 
-        // The VFIO device that represents this card
-        kernel::vfio::Device* vfioDevice;
+// 	ip::Core::Ptr
+// 	lookupIp(const std::string &name) const;
 
-		// Slave address space ID to access the PCIe address space from the FPGA
-		MemoryManager::AddressSpaceId addrSpaceIdDeviceToHost;
+// 	ip::Core::Ptr
+// 	lookupIp(const Vlnv &vlnv) const;
 
-        // Address space identifier of the master address space of this FPGA
-        // card. This will be used for address resolution of all IPs on this
-        // card.
-        MemoryManager::AddressSpaceId addrSpaceIdHostToDevice;
+// 	ip::Core::Ptr
+// 	lookupIp(const ip::IpIdentifier &id) const;
 
-		//kernel::vfio::Device* vfioDevice;
+// 	bool
+// 	mapMemoryBlock(const MemoryBlock &block);
 
-        ip::Core::Ptr lookupIp(const std::string &name) const;
+// private:
+// 	// Cache a set of already mapped memory blocks
+// 	std::set<MemoryManager::AddressSpaceId> memoryBlocksMapped;
+
+// public:	// TODO: make this private
+
+// 	bool doReset;					// Reset VILLASfpga during startup?
+
+// 	std::string name;				// The name of the FPGA card
+
+// 	std::shared_ptr<kernel::pci::Device> pdev;	// PCI device handle
+
+// 	// The VFIO container that this card is part of
+// 	std::shared_ptr<kernel::vfio::Container> vfioContainer;
+
+// 	// The VFIO device that represents this card
+// 	kernel::vfio::Device* vfioDevice;
+
+// 	// Slave address space ID to access the PCIe address space from the FPGA
+// 	MemoryManager::AddressSpaceId addrSpaceIdDeviceToHost;
+
+// 	// Address space identifier of the master address space of this FPGA card.
+// 	// This will be used for address resolution of all IPs on this card.
+// 	MemoryManager::AddressSpaceId addrSpaceIdHostToDevice;
+
+// protected:
+// 	Logger
+// 	getLogger() const
+// 	{ return villas::logging.get(name); }
+
+// 	Logger logger;
 };
 
 class FpgaDeviceFactory : public plugin::Plugin

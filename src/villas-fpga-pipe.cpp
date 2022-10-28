@@ -102,9 +102,10 @@ setupFpgaCard(const std::string &configFile, const std::string &fpgaName)
 	}
 
 	// Create all FPGA card instances using the corresponding plugin
-	auto cards = fpgaCardFactory->make(fpgas, pciDevices, vfioContainer);
+        fpga::FpgaDevice::List cards
+            = fpgaCardFactory->make(fpgas, pciDevices, vfioContainer);
 
-	std::shared_ptr<fpga::FpgaDevice> card;
+        std::shared_ptr<fpga::FpgaDevice> card;
 	for (auto &fpgaCard : cards) {
 		if (fpgaCard->name == fpgaName) {
 			return fpgaCard;
