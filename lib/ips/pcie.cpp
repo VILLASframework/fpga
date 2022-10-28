@@ -23,6 +23,7 @@
 #include <limits>
 #include <jansson.h>
 
+#include <villas/fpga/core.hpp>
 #include <villas/memory.hpp>
 
 #include <villas/fpga/card.hpp>
@@ -37,43 +38,51 @@ AxiPciExpressBridge::init()
 {
 	auto &mm = MemoryManager::get();
 
-	// Throw an exception if the is no bus master interface and thus no
-	// address space we can use for translation -> error
-	card->addrSpaceIdHostToDevice = busMasterInterfaces.at(axiInterface);
+        PCIeCard *pcieCard = dynamic_cast<PCIeCard*>(card);
 
-	// Map PCIe BAR0 via VFIO
-	const void* bar0_mapped = card->vfioDevice->regionMap(VFIO_PCI_BAR0_REGION_INDEX);
-	if (bar0_mapped == MAP_FAILED) {
-		logger->error("Failed to mmap() BAR0");
+        // Throw an exception if the is no bus master interface and thus no
+        // address space we can use for translation -> error
+        pcieCard->addrSpaceIdHostToDevice
+            = busMasterInterfaces.at(axiInterface);
+
+        // Map PCIe BAR0 via VFIO
+        const void *bar0_mapped
+            = pcieCard->vfioDevice->regionMap(VFIO_PCI_BAR0_REGION_INDEX);
+        if(bar0_mapped == MAP_FAILED) {
+                logger->error("Failed to mmap() BAR0");
 		return false;
-	}
+        }
 
-	// Determine size of BAR0 region
-	const size_t bar0_size = card->vfioDevice->regionGetSize(VFIO_PCI_BAR0_REGION_INDEX);
+        // Determine size of BAR0 region
+        const size_t bar0_size
+            = pcieCard->vfioDevice->regionGetSize(VFIO_PCI_BAR0_REGION_INDEX);
 
-	// Create a mapping from process address space to the FPGA card via vfio
-	mm.createMapping(reinterpret_cast<uintptr_t>(bar0_mapped),
-	                 0, bar0_size, "vfio-h2d",
-	                 mm.getProcessAddressSpace(),
-	                 card->addrSpaceIdHostToDevice);
+        // Create a mapping from process address space to the FPGA pcieCard via
+        // vfio
+        mm.createMapping(reinterpret_cast<uintptr_t>(bar0_mapped),
+                         0,
+                         bar0_size,
+                         "vfio-h2d",
+                         mm.getProcessAddressSpace(),
+                         pcieCard->addrSpaceIdHostToDevice);
 
-	// Make PCIe (IOVA) address space available to FPGA via BAR0
+        // Make PCIe (IOVA) address space available to FPGA via BAR0
 
-	// IPs that can access this address space will know it via their memory view
+        // IPs that can access this address space will know it via their memory view
 	const auto addrSpaceNameDeviceToHost =
 	        mm.getSlaveAddrSpaceName(getInstanceName(), pcieMemory);
 
-	// Save ID in card so we can create mappings later when needed (e.g. when
-	// allocating DMA memory in host RAM)
-	card->addrSpaceIdDeviceToHost =
-	        mm.getOrCreateAddressSpace(addrSpaceNameDeviceToHost);
+        // Save ID in pcieCard so we can create mappings later when needed
+        // (e.g. when allocating DMA memory in host RAM)
+        pcieCard->addrSpaceIdDeviceToHost
+            = mm.getOrCreateAddressSpace(addrSpaceNameDeviceToHost);
 
-	auto pciAddrSpaceId = mm.getPciAddressSpace();
+        auto pciAddrSpaceId = mm.getPciAddressSpace();
 
-	auto regions = card->pdev->getRegions();
+        auto regions = pcieCard->pdev->getRegions();
 
-	int i = 0;
-	for (auto region : regions) {
+        int i = 0;
+        for (auto region : regions) {
 		const size_t region_size = region.end - region.start + 1;
 
 		char barName[] = "BARx";
@@ -85,12 +94,15 @@ AxiPciExpressBridge::init()
 		logger->info("PCI-BAR{}: AXI translation offset {:#x}",
 		             i, pciBar.translation);
 
-		mm.createMapping(region.start, pciBar.translation, region_size,
-		                 std::string("PCI-") + barName,
-		                 pciAddrSpaceId, card->addrSpaceIdHostToDevice);
-	}
+                mm.createMapping(region.start,
+                                 pciBar.translation,
+                                 region_size,
+                                 std::string("PCI-") + barName,
+                                 pciAddrSpaceId,
+                                 pcieCard->addrSpaceIdHostToDevice);
+        }
 
-	for (auto& [barName, axiBar] : axiToPcieTranslations) {
+        for (auto& [barName, axiBar] : axiToPcieTranslations) {
 		logger->info("AXI-{}: bus addr={:#x} size={:#x}",
 		             barName, axiBar.base, axiBar.size);
 		logger->info("AXI-{}: PCI translation offset: {:#x}",
