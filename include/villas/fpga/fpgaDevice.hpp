@@ -94,7 +94,7 @@ class FpgaDevice
         // 	std::set<MemoryManager::AddressSpaceId> memoryBlocksMapped;
 
         // public:	// TODO: make this private
-        // 	ip::Core::List ips;				// IPs located
+        ip::Core::List ips;				// IPs located
         // on this FPGA card
 
         // 	bool doReset;					// Reset
@@ -107,7 +107,7 @@ class FpgaDevice
         // handle
 
         // 	// The VFIO container that this card is part of
-        // 	std::shared_ptr<kernel::vfio::Container> vfioContainer;
+        std::shared_ptr<kernel::vfio::Container> vfioContainer;
 
         // The VFIO device that represents this card
         kernel::vfio::Device *vfioDevice;
@@ -135,7 +135,6 @@ class FpgaDeviceFactory : public plugin::Plugin
     public:
         static FpgaDevice::List
         make(json_t *json,
-             std::shared_ptr<kernel::pci::DeviceList> pci,
              std::shared_ptr<kernel::vfio::Container> vc);
 
         // static FpgaDevice *create()
@@ -143,10 +142,11 @@ class FpgaDeviceFactory : public plugin::Plugin
         //         return new FpgaDevice();
         // }
 
-        // static Logger getStaticLogger()
-        // {
-        //         return villas::logging.get("pcie:card:factory");
-        // }
+        static Logger getStaticLogger()
+        {
+                // ToDo: make a proper logger
+                return villas::logging.get("pcie:card:factory");
+        }
 
         // virtual std::string getName() const
         // {

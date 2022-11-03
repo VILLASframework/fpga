@@ -136,6 +136,7 @@ public:
 	static PCIeCard::List
 	make(json_t *json, std::shared_ptr<kernel::pci::DeviceList> pci, std::shared_ptr<kernel::vfio::Container> vc);
 
+	//! ToDo: WARN: This function is badly designed and should be changed to make_unique (replaced in fpgaDevice)
 	static PCIeCard*
 	create()
 	{
