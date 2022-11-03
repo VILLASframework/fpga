@@ -89,11 +89,11 @@ class FpgaDevice
 
         bool mapMemoryBlock(const MemoryBlock &block);
 
-        // private:
-        // 	// Cache a set of already mapped memory blocks
-        // 	std::set<MemoryManager::AddressSpaceId> memoryBlocksMapped;
+    private:
+        // Cache a set of already mapped memory blocks
+        std::set<MemoryManager::AddressSpaceId> memoryBlocksMapped;
 
-        // public:	// TODO: make this private
+    public:	// TODO: make this private
         ip::Core::List ips;				// IPs located
         // on this FPGA card
 
@@ -127,7 +127,7 @@ class FpgaDevice
         // 		return villas::logging.get(name);
         // 	}
 
-        // 	Logger logger;
+        Logger logger;
 };
 
 class FpgaDeviceFactory : public plugin::Plugin
