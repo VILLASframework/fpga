@@ -58,7 +58,8 @@ InterruptController::init()
 	for (int i = 0; i < num_irqs; i++) {
 
 		// Try pinning to core
-		int ret = kernel::setIRQAffinity(nos[i], card->affinity, nullptr);
+		PCIeCard* pcieCard = dynamic_cast<PCIeCard*>(card);
+		int ret = kernel::setIRQAffinity(nos[i], pcieCard->affinity, nullptr);
 
 		switch(ret) {
 		case 0:
