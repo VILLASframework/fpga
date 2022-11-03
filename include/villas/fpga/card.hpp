@@ -49,17 +49,12 @@ namespace fpga {
 struct vfio_container;
 class PCIeCardFactory;
 
-class Card {
+class PCIeCard : public FpgaDevice {
 public:
-
 	using Ptr = std::shared_ptr<PCIeCard>;
 	using List = std::list<Ptr>;
 
 	friend PCIeCardFactory;
-};
-
-class PCIeCard : public Card {
-public:
 
 	~PCIeCard();
 
