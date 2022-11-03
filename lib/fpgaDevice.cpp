@@ -77,11 +77,11 @@ bool FpgaDevice::mapMemoryBlock(const MemoryBlock &block)
 }
 
 FpgaDevice::List
-FpgaDeviceFactory::make(json_t *json,
-                        std::shared_ptr<kernel::vfio::Container> vc)
+FpgaDeviceFactory::make(std::shared_ptr<kernel::vfio::Container> vc,
+                        json_t *json)
 {
-        FpgaDevice::List cards;
         auto logger = getStaticLogger();
+        FpgaDevice::List cards;
 
         const char *card_name;
         json_t *json_card;
@@ -118,7 +118,7 @@ FpgaDeviceFactory::make(json_t *json,
                 // Populate generic properties
                 card->name = std::string(card_name);
                 card->vfioContainer = std::move(vc);
-                card->affinity = affinity;
+                //card->affinity = affinity;
 
                 // kernel::pci::Device filter = defaultFilter;
 
