@@ -25,6 +25,7 @@ set(SOURCES
 	card.cpp
 	core.cpp
 	fpgaDevice.cpp
+	platformDevice.cpp
 	node.cpp
 
 	ips/timer.cpp
