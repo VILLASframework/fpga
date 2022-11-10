@@ -41,7 +41,6 @@
 
 #include <villas/kernel/vfio.hpp>
 
-#include <villas/fpga/config.h>
 #include <villas/fpga/core.hpp>
 
 namespace villas
@@ -61,7 +60,8 @@ class FpgaDevice
         std::shared_ptr<kernel::vfio::Container> vfioContainer;
         kernel::vfio::Device *vfioDevice;
 
-        virtual ~FpgaDevice();
+        FpgaDevice(){}; // for compatibility with card.hpp
+        virtual ~FpgaDevice() = 0;
 
         ip::Core::Ptr lookupIp(const std::string &name) const;
         ip::Core::Ptr lookupIp(const Vlnv &vlnv) const;
@@ -75,16 +75,21 @@ class FpgaDevice
         MemoryManager::AddressSpaceId addrSpaceIdHostToDevice;
         MemoryManager::AddressSpaceId addrSpaceIdDeviceToHost;
 
-        Logger logger;
         // Cache a set of already mapped memory blocks
         std::set<MemoryManager::AddressSpaceId> memoryBlocksMapped;
+
+    protected:
+        Logger logger;
+
+        FpgaDevice(std::string name,
+                   std::shared_ptr<kernel::vfio::Container> vc);
 };
 
 class FpgaDeviceFactory : public plugin::Plugin
 {
     public:
-        virtual FpgaDevice::List make(std::shared_ptr<kernel::vfio::Container> vc,
-                              json_t *json) const;
+        virtual FpgaDevice::List
+        make(std::shared_ptr<kernel::vfio::Container> vc, json_t *json) const;
 
         static Logger getStaticLogger()
         {
