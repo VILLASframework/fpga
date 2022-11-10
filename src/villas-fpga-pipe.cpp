@@ -30,13 +30,15 @@
 #include <CLI11.hpp>
 #include <rang.hpp>
 
+#include <villas/kernel/pci.hpp>
+
 #include <villas/exceptions.hpp>
 #include <villas/log.hpp>
 #include <villas/utils.hpp>
 #include <villas/utils.hpp>
 
 #include <villas/fpga/core.hpp>
-#include <villas/fpga/fpgaDevice.hpp>
+#include <villas/fpga/platformDevice.hpp>
 #include <villas/fpga/vlnv.hpp>
 #include <villas/fpga/ips/dma.hpp>
 #include <villas/fpga/ips/rtds.hpp>
@@ -103,10 +105,10 @@ setupFpgaCard(const std::string &configFile, const std::string &fpgaName)
 
 	// Create all FPGA card instances using the corresponding plugin
         fpga::FpgaDevice::List cards
-            = fpgaCardFactory->make(fpgas, vfioContainer);
+            = fpgaCardFactory->make(vfioContainer, fpgas);
 
         std::shared_ptr<fpga::FpgaDevice> card;
-	for (auto &fpgaCard : cards) {
+        for (auto &fpgaCard : cards) {
 		if (fpgaCard->name == fpgaName) {
 			return fpgaCard;
 		}
@@ -121,6 +123,16 @@ setupFpgaCard(const std::string &configFile, const std::string &fpgaName)
 	return card;
 }
 
+int main()
+{
+	spdlog::set_level(spdlog::level::debug);
+
+	auto vfioContainer = kernel::vfio::Container::create();
+	fpga::PlatformDevice card("fpga", vfioContainer, "devName", 100);
+
+}
+
+/*
 int main(int argc, char* argv[])
 {
 	// Command Line Parser
@@ -227,3 +239,4 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+*/
