@@ -56,6 +56,7 @@ public:
 
 	friend PCIeCardFactory;
 
+	PCIeCard(){};
 	~PCIeCard();
 
 	bool init();
