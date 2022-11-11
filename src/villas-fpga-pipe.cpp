@@ -125,10 +125,21 @@ setupFpgaCard(const std::string &configFile, const std::string &fpgaName)
 
 int main()
 {
+int main()
+{
 	spdlog::set_level(spdlog::level::debug);
 
-	auto vfioContainer = kernel::vfio::Container::create();
-	fpga::PlatformDevice card("fpga", vfioContainer, "devName", 100);
+	std::shared_ptr<kernel::vfio::Container> vfioContainer = kernel::vfio::Container::create();
+	
+	// * Create Platform Card
+	// const char* DEVICE_NAME = "xilinx...";
+	// const int IOMMU_GROUP = 100;
+	//fpga::PlatformDevice card("fpgaCardPlatform", vfioContainer, DEVICE_NAME, IOMMU_GROUP);
+
+	// * Create PCIeCard
+	fpga::pcieDevice card("fpgaCardPcie", vfioContainer, pdev);
+
+}
 
 }
 
