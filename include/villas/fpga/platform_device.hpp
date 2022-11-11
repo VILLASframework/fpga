@@ -69,6 +69,6 @@ class PlatformDeviceFactory : public FpgaDeviceFactory
                 return villas::logging.get("pcie:card:factory");
         }
 };
-}
-}
 
+}// namespace fpga
+}// namespace villas

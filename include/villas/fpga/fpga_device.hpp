@@ -95,6 +95,6 @@ class FpgaDeviceFactory : public plugin::Plugin
                 return villas::logging.get("pcie:card:factory");
         }
 };
-}
-}
 
+}// namespace fpga
+}// namespace villas
