@@ -28,12 +28,12 @@ bool PlatformDevice::initVfio()
         return true;
 }
 
-FpgaDevice::List
+PlatformDevice::List
 PlatformDeviceFactory::make(std::shared_ptr<kernel::vfio::Container> vc,
                             json_t *json) const
 {
         auto logger = getStaticLogger();
-        PlatformDevice::List cards;
+        FpgaDevice::List cards;
 
         const char *card_name;
         json_t *json_card;
