@@ -89,7 +89,7 @@ class FpgaDeviceFactory : public plugin::Plugin
 {
     public:
         virtual FpgaDevice::List
-        make(std::shared_ptr<kernel::vfio::Container> vc, json_t *json) const;
+        make(std::shared_ptr<kernel::vfio::Container> vc, json_t *json) const = 0;
 
         static Logger getStaticLogger()
         {
