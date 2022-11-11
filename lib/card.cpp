@@ -58,7 +58,6 @@ PCIeCard::List PCIeCardFactory::make(json_t *json, std::shared_ptr<kernel::pci::
 		const char* pci_id   = nullptr;
 		int         do_reset = 0;
 		int         affinity = 0;
-		int 	    polling  = 0;
 
 		json_error_t err;
 		int ret = json_unpack_ex(json_card, &err, 0, "{ s: o, s?: i, s?: b, s?: s, s?: s, s?: b, s?: o }",
@@ -80,7 +79,6 @@ PCIeCard::List PCIeCardFactory::make(json_t *json, std::shared_ptr<kernel::pci::
 		card->vfioContainer = vc;
 		card->affinity = affinity;
 		card->doReset = do_reset != 0;
-		card->polling = (polling != 0);
 
 		kernel::pci::Device filter = defaultFilter;
 
