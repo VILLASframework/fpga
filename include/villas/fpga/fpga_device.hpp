@@ -27,10 +27,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *********************************************************************************/
 
-/** @addtogroup fpga VILLASfpga
- * @{
- */
-
 #pragma once
 
 #include <jansson.h>
@@ -102,4 +98,3 @@ class FpgaDeviceFactory : public plugin::Plugin
 }
 }
 
-/** @} */
