@@ -1,4 +1,4 @@
-#include <villas/fpga/fpgaDevice.hpp>
+#include <villas/fpga/fpga_device.hpp>
 
 using namespace villas;
 using namespace villas::fpga;
@@ -7,9 +7,7 @@ FpgaDevice::FpgaDevice(std::string name,
                        std::shared_ptr<kernel::vfio::Container> vc)
     : name(name), vfioContainer(vc), logger(villas::logging.get(name))
 {
-
 }
-
 
 FpgaDevice::~FpgaDevice()
 {
@@ -79,4 +77,3 @@ bool FpgaDevice::mapMemoryBlock(const MemoryBlock &block)
 
         return true;
 }
-

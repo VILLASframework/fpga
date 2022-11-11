@@ -6,7 +6,7 @@
  * @author Pascal Bauer <pascal.bauer@rwth-aachen.de>
   based on the work of: Steffen Vogel <stvogel@eonerc.rwth-aachen.de>
                         Daniel Krebs <github@daniel-krebs.net>
- 
+
  * @copyright 2017-2022, Institute for Automation of Complex Power Systems,
  *EONERC
  * @license GNU General Public License (version 3)
@@ -33,8 +33,8 @@
 
 #pragma once
 
-#include "fpgaDevice.hpp"
-#include <villas/fpga/fpgaDevice.hpp>
+#include "fpga_device.hpp"
+#include <villas/fpga/fpga_device.hpp>
 
 namespace villas
 {

@@ -24,8 +24,8 @@ set(SOURCES
 	vlnv.cpp
 	card.cpp
 	core.cpp
-	fpgaDevice.cpp
-	platformDevice.cpp
+	fpga_device.cpp
+	platform_device.cpp
 	node.cpp
 
 	ips/timer.cpp

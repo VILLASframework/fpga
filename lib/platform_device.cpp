@@ -1,6 +1,6 @@
-#include <villas/fpga/platformDevice.hpp>
-#include <villas/fpga/config.h>
 #include <villas/exceptions.hpp>
+#include <villas/fpga/config.h>
+#include <villas/fpga/platform_device.hpp>
 
 using namespace villas;
 using namespace villas::fpga;
@@ -67,7 +67,9 @@ PlatformDeviceFactory::make(std::shared_ptr<kernel::vfio::Container> vc,
 
                 auto card
                     = std::make_unique<PlatformDevice>(std::string(card_name),
-                                                       std::move(vc), "", -1);
+                                                       std::move(vc),
+                                                       "",
+                                                       -1);
 
                 // card->affinity = affinity;
 

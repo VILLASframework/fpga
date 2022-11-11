@@ -40,7 +40,7 @@
 #include <villas/fpga/config.h>
 #include <villas/fpga/core.hpp>
 
-#include <villas/fpga/fpgaDevice.hpp>
+#include <villas/fpga/fpga_device.hpp>
 
 namespace villas {
 namespace fpga {

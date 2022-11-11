@@ -38,11 +38,11 @@
 #include <villas/utils.hpp>
 
 #include <villas/fpga/core.hpp>
-#include <villas/fpga/platformDevice.hpp>
-#include <villas/fpga/vlnv.hpp>
+#include <villas/fpga/ips/aurora_xilinx.hpp>
 #include <villas/fpga/ips/dma.hpp>
 #include <villas/fpga/ips/rtds.hpp>
-#include <villas/fpga/ips/aurora_xilinx.hpp>
+#include <villas/fpga/platform_device.hpp>
+#include <villas/fpga/vlnv.hpp>
 
 using namespace villas;
 
