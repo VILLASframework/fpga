@@ -30,7 +30,6 @@
 
 #pragma once
 
-#include "fpga_device.hpp"
 #include <villas/fpga/fpga_device.hpp>
 
 namespace villas
