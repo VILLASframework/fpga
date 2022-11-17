@@ -7,8 +7,7 @@
   based on the work of: Steffen Vogel <stvogel@eonerc.rwth-aachen.de>
                         Daniel Krebs <github@daniel-krebs.net>
 
- * @copyright 2017-2022, Institute for Automation of Complex Power Systems,
- *EONERC
+ * @copyright 2017-2022, Institute for Automation of Complex Power Systems, EONERC
  * @license GNU General Public License (version 3)
  *
  * VILLASfpga
@@ -27,19 +26,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *********************************************************************************/
 
-
 #pragma once
 
 #include <villas/fpga/fpga_device.hpp>
 
-namespace villas
-{
-namespace fpga
-{
+namespace villas {
+namespace fpga {
 
 class PlatformDevice : public FpgaDevice
 {
-    public:
+public:
         using Ptr = std::shared_ptr<PlatformDevice>;
         using List = std::list<Ptr>;
 
@@ -52,13 +48,13 @@ class PlatformDevice : public FpgaDevice
                        const int IOMMU_GROUP);
         ~PlatformDevice(){};
 
-    private:
+private:
         bool initVfio();
 };
 
 class PlatformDeviceFactory : public FpgaDeviceFactory
 {
-    public:
+public:
         PlatformDevice::List make(std::shared_ptr<kernel::vfio::Container> vc,
                                   json_t *json) const override;
 
@@ -69,5 +65,5 @@ class PlatformDeviceFactory : public FpgaDeviceFactory
         }
 };
 
-}// namespace fpga
-}// namespace villas
+} // namespace fpga
+} // namespace villas
