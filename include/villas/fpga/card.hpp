@@ -131,7 +131,7 @@ protected:
 	Logger logger;
 };
 
-class PCIeCardFactory : public FpgaDeviceFactory {
+class PCIeCardFactory : public plugin::Plugin { //! inheritance should be refactored and method make should not depend on pcie param
 public:
 
 	static PCIeCard::List
