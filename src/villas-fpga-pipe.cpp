@@ -125,8 +125,6 @@ setupFpgaCard(const std::string &configFile, const std::string &fpgaName)
 
 int main()
 {
-int main()
-{
 	spdlog::set_level(spdlog::level::debug);
 
 	std::shared_ptr<kernel::vfio::Container> vfioContainer = kernel::vfio::Container::create();
@@ -137,9 +135,7 @@ int main()
 	//fpga::PlatformDevice card("fpgaCardPlatform", vfioContainer, DEVICE_NAME, IOMMU_GROUP);
 
 	// * Create PCIeCard
-	fpga::pcieDevice card("fpgaCardPcie", vfioContainer, pdev);
-
-}
+	//fpga::pcieCard card("fpgaCardPcie", vfioContainer, pdev);
 
 }
 
