@@ -26,7 +26,7 @@ bool PlatformDevice::initVfio()
             = vfioContainer->attachDevice(DEVICE_NAME, IOMMU_GROUP);
         this->vfioDevice = &device;
 
-        this->vfioDevice->dump();
+        this->vfioContainer->dump();
 
         return true;
 }
