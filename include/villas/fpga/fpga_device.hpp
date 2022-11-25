@@ -53,7 +53,10 @@ class FpgaDevice
         using List = std::list<Ptr>;
 
         std::string name;
+        // ToDo: Refactor with interrupt class
+        bool polling;
 
+        // This should be private but the core directly access it
         ip::Core::List ips;
         std::shared_ptr<kernel::vfio::Container> vfioContainer;
         kernel::vfio::Device *vfioDevice;
