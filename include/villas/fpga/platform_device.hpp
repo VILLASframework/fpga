@@ -55,7 +55,7 @@ private:
 class PlatformDeviceFactory : public FpgaDeviceFactory
 {
 public:
-        PlatformDevice::List make(std::shared_ptr<kernel::vfio::Container> vc,
+        FpgaDevice::List make(std::shared_ptr<kernel::vfio::Container> vc,
                                   json_t *json) const override;
 
         static Logger getStaticLogger()
