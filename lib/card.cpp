@@ -37,6 +37,7 @@ using namespace villas;
 using namespace villas::fpga;
 
 // Instantiate factory to register
+//! WARN: sideeffects unclear
 static PCIeCardFactory villas::fpga::PCIeCardFactory;
 
 static const kernel::pci::Device defaultFilter((kernel::pci::Id(FPGA_PCI_VID_XILINX, FPGA_PCI_PID_VFPGA)));
