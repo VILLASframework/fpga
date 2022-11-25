@@ -1,3 +1,4 @@
+#include <linux/vfio.h>
 #include <villas/exceptions.hpp>
 #include <villas/fpga/config.h>
 #include <villas/fpga/platform_device.hpp>
@@ -25,10 +26,12 @@ bool PlatformDevice::initVfio()
             = vfioContainer->attachDevice(DEVICE_NAME, IOMMU_GROUP);
         this->vfioDevice = &device;
 
+        this->vfioDevice->dump();
+
         return true;
 }
 
-PlatformDevice::List
+FpgaDevice::List
 PlatformDeviceFactory::make(std::shared_ptr<kernel::vfio::Container> vc,
                             json_t *json) const
 {
@@ -65,11 +68,13 @@ PlatformDeviceFactory::make(std::shared_ptr<kernel::vfio::Container> vc,
                         continue;
                 }
 
+                const char * name = "READ FROM JSON";
+                const int iommu_group = -1;
                 auto card
                     = std::make_unique<PlatformDevice>(std::string(card_name),
                                                        std::move(vc),
-                                                       "",
-                                                       -1);
+                                                       name,
+                                                       iommu_group);
 
                 // card->affinity = affinity;
 
