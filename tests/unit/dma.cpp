@@ -82,8 +82,9 @@ Test(fpga, dma, .description = "DMA")
 		auto dst = HostRam::getAllocator().allocate<char>(len);
 #endif
 		// Make sure memory is accessible for DMA
-		dma->makeAccesibleFromVA(src.getMemoryBlock());
-		dma->makeAccesibleFromVA(dst.getMemoryBlock());
+		//TODO: BROKEN API
+		//dma->makeAccesibleFromVA(src.getMemoryBlock());
+		//dma->makeAccesibleFromVA(dst.getMemoryBlock());
 
 		// Get new random data
 		const size_t lenRandom = utils::readRandom(&src, len);

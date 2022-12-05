@@ -104,8 +104,8 @@ int main(int argc, char* argv[])
 		dma->connectLoopback();
 #endif
 		auto &alloc = villas::HostRam::getAllocator();
-		auto mem = alloc.allocate<int32_t>(0x100);
-		auto block = mem.getMemoryBlock();
+		const villas::MemoryBlock::Ptr block = std::move(alloc.allocateBlock(sizeof(int32_t)*0x100));
+		int32_t* mem = reinterpret_cast<int32_t*>(block->getOffset());
 
 		dma->makeAccesibleFromVA(block);
 
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 
 		while (true) {
 			// Setup read transfer
-			dma->read(block, block.getSize());
+			dma->read(*block, block->getSize());
 
 			// Read values from stdin
 			std::string line;
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
 			}
 
 			// Initiate write transfer
-			bool state = dma->write(block, i * sizeof(int32_t));
+			bool state = dma->write(*block, i * sizeof(int32_t));
 			if (!state)
 				logger->error("Failed to write to device");
 

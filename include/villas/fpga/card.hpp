@@ -89,11 +89,11 @@ public:
 	lookupIp(const ip::IpIdentifier &id) const;
 
 	bool
-	mapMemoryBlock(const MemoryBlock &block);
+	mapMemoryBlock(std::shared_ptr<MemoryBlock> block);
 
 private:
 	// Cache a set of already mapped memory blocks
-	std::set<MemoryManager::AddressSpaceId> memoryBlocksMapped;
+	std::map<MemoryManager::AddressSpaceId, std::shared_ptr<MemoryBlock>> memoryBlocksMapped;
 
 public:	// TODO: make this private
 	std::list<std::shared_ptr<ip::Core>> ips;				// IPs located on this FPGA card

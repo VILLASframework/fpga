@@ -76,8 +76,14 @@ int main(int argc, char* argv[])
 		// 	 still accesses the allocated memory. This order ensures that the allocator
 		//       is destroyed AFTER the card.
 		auto &alloc = villas::HostRam::getAllocator();
-		villas::MemoryAccessor<int32_t> mem[] = {alloc.allocate<int32_t>(0x200), alloc.allocate<int32_t>(0x200)};
-		const villas::MemoryBlock block[] = {mem[0].getMemoryBlock(), mem[1].getMemoryBlock()};
+		const villas::MemoryBlock::Ptr block[] = {
+			std::move(alloc.allocateBlock(sizeof(int32_t)*0x200)),
+			std::move(alloc.allocateBlock(sizeof(int32_t)*0x200)),
+		};
+		int32_t* mem[] = {
+			reinterpret_cast<int32_t*>(block[0]->getOffset()),
+			reinterpret_cast<int32_t*>(block[1]->getOffset()),
+		};
 
 		auto card = fpga::setupFpgaCard(configFile, fpgaName);
 
@@ -119,10 +125,10 @@ int main(int argc, char* argv[])
 		mm.getGraph().dump("graph.dot");
 
 		// Setup read transfer
-		dma->read(block[0], block[0].getSize());
+		dma->read(*block[0], block[0]->getSize());
 		size_t cur = 0, next = 1;
 		while (true) {
-			dma->read(block[next], block[next].getSize());
+			dma->read(*block[next], block[next]->getSize());
 			auto bytesRead = dma->readComplete();
 			// Setup read transfer
 
