@@ -91,7 +91,7 @@ Test(fpga, rtds, .description = "RTDS")
 				logger->info("RTT iteration {}", i);
 
 //				logger->info("Prepare read");
-				cr_assert(dma->read(mem.getMemoryBlock(), mem.getMemoryBlock().getSize()),
+				cr_assert(dma->read(*mem.getMemoryBlock(), mem.getMemoryBlock()->getSize()),
 				          "Failed to initiate DMA read");
 
 //				logger->info("Wait read");
@@ -101,7 +101,7 @@ Test(fpga, rtds, .description = "RTDS")
 
 //				logger->info("Bytes received: {}", bytesRead);
 //				logger->info("Prepare write");
-				cr_assert(dma->write(mem.getMemoryBlock(), bytesRead),
+				cr_assert(dma->write(*mem.getMemoryBlock(), bytesRead),
 				          "Failed to initiate DMA write");
 
 //				logger->info("Wait write");

@@ -83,15 +83,15 @@ Test(fpga, dma, .description = "DMA")
 #endif
 		// Make sure memory is accessible for DMA
 		//TODO: BROKEN API
-		//dma->makeAccesibleFromVA(src.getMemoryBlock());
-		//dma->makeAccesibleFromVA(dst.getMemoryBlock());
+		dma->makeAccesibleFromVA(src.getMemoryBlock());
+		dma->makeAccesibleFromVA(dst.getMemoryBlock());
 
 		// Get new random data
 		const size_t lenRandom = utils::readRandom(&src, len);
 		cr_assert(len == lenRandom, "Failed to get random data");
 
 		// Start transfer
-		cr_assert(dma->memcpy(src.getMemoryBlock(), dst.getMemoryBlock(), len),
+		cr_assert(dma->memcpy(*src.getMemoryBlock(), *dst.getMemoryBlock(), len),
 		          "DMA ping pong failed");
 
 		// Compare data
