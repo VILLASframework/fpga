@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 		// 	 still accesses the allocated memory. This order ensures that the allocator
 		//       is destroyed AFTER the card.
 		auto &alloc = villas::HostRam::getAllocator();
-		const villas::MemoryBlock::Ptr block[] = {
+		const std::shared_ptr<villas::MemoryBlock> block[] = {
 			std::move(alloc.allocateBlock(sizeof(int32_t)*0x200)),
 			std::move(alloc.allocateBlock(sizeof(int32_t)*0x200)),
 		};

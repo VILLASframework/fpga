@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
 		dma->connectLoopback();
 #endif
 		auto &alloc = villas::HostRam::getAllocator();
-		const villas::MemoryBlock::Ptr block = std::move(alloc.allocateBlock(sizeof(int32_t)*0x100));
+		const std::shared_ptr<villas::MemoryBlock> block = std::move(alloc.allocateBlock(sizeof(int32_t)*0x100));
 		int32_t* mem = reinterpret_cast<int32_t*>(block->getOffset());
 
 		dma->makeAccesibleFromVA(block);

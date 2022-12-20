@@ -147,8 +147,8 @@ private:
 	// Depending on alignment, the actual number of BDs usable can be smaller
 	static constexpr size_t requestedRingBdSize = 2048;
 	uint32_t actualRingBdSize = XAxiDma_BdRingCntCalc(XAXIDMA_BD_MINIMUM_ALIGNMENT, requestedRingBdSize);
-	MemoryBlock::Ptr sgRingTx;
-	MemoryBlock::Ptr sgRingRx;
+	std::shared_ptr<villas::MemoryBlock> sgRingTx;
+	std::shared_ptr<villas::MemoryBlock> sgRingRx;
 };
 
 class DmaFactory : public NodeFactory {
