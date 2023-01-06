@@ -203,7 +203,7 @@ std::shared_ptr<ip::Core> PCIeCard::lookupIp(const ip::IpIdentifier &id) const
 	return nullptr;
 }
 
-bool PCIeCard::unmapMemoryBlock(const MemoryBlock& block)
+bool PCIeCard::unmapMemoryBlock(const MemoryBlock &block)
 {
 	if (memoryBlocksMapped.find(block.getAddrSpaceId()) == memoryBlocksMapped.end()) {
 		throw std::runtime_error("Block " + std::to_string(block.getAddrSpaceId()) + " is not mapped but was requested to be unmapped.");

@@ -73,7 +73,7 @@ public:
 	lookupIp(const ip::IpIdentifier &id) const;
 
 	bool mapMemoryBlock(const std::shared_ptr<MemoryBlock> block);
-	bool unmapMemoryBlock(const MemoryBlock& block);
+	bool unmapMemoryBlock(const MemoryBlock &block);
 
 private:
 	// Keep a map of already mapped memory blocks
