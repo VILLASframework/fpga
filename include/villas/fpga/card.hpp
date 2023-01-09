@@ -72,12 +72,12 @@ public:
 	std::shared_ptr<ip::Core>
 	lookupIp(const ip::IpIdentifier &id) const;
 
-	bool mapMemoryBlock(const MemoryBlock &block);
+	bool mapMemoryBlock(const std::shared_ptr<MemoryBlock> block);
 	bool unmapMemoryBlock(const MemoryBlock &block);
 
 private:
-	// Cache a set of already mapped memory blocks
-	std::set<MemoryManager::AddressSpaceId> memoryBlocksMapped;
+	// Keep a map of already mapped memory blocks
+	std::map<MemoryManager::AddressSpaceId, std::shared_ptr<MemoryBlock>> memoryBlocksMapped;
 
 public:	// TODO: make this private
 	std::list<std::shared_ptr<ip::Core>> ips;				// IPs located on this FPGA card
