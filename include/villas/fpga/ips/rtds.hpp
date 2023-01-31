@@ -15,8 +15,10 @@ namespace ip {
 
 class RtdsGtfpga : public Node {
 public:
-	static constexpr const char* masterPort = "m_axis";
-	static constexpr const char* slavePort = "s_axis";
+	static constexpr
+	const char* masterPort = "m_axis";
+	static constexpr
+	const char* slavePort = "s_axis";
 
 	virtual
 	void dump() override;
@@ -43,10 +45,14 @@ public:
 	}
 
 private:
-	static constexpr const char registerMemory[] = "reg0";
-	static constexpr const char* irqTs = "irq_ts";
-	static constexpr const char* irqOverflow = "irq_overflow";
-	static constexpr const char* irqCase = "irq_case";
+	static constexpr
+	const char registerMemory[] = "reg0";
+	static constexpr
+	const char* irqTs = "irq_ts";
+	static constexpr
+	const char* irqOverflow = "irq_overflow";
+	static constexpr
+	const char* irqCase = "irq_case";
 };
 
 } /* namespace ip */

@@ -387,10 +387,9 @@ Dma::Completion Dma::writeCompleteScatterGather()
 	c.interrupts = irqs[mm2sInterrupt].irqController->waitForInterrupt(irqs[mm2sInterrupt].num);
 
 	hwLock.lock();
-	if ((c.bds = XAxiDma_BdRingFromHw(txRing, writeCoalesce, &bd)) < writeCoalesce)
-	{
+	if ((c.bds = XAxiDma_BdRingFromHw(txRing, writeCoalesce, &bd)) < writeCoalesce) {
 		logger->warn("Send partial batch of {}/{} BDs.", c.bds, writeCoalesce);
-		if(errcnt-- == 0) {
+		if (errcnt-- == 0) {
 			hwLock.unlock();
 			throw RuntimeError("too many partial batches");
 		}
@@ -446,10 +445,9 @@ Dma::Completion Dma::readCompleteScatterGather()
 
 	hwLock.lock();
 	// Wait until the data has been received by the RX channel.
-	if ((c.bds = XAxiDma_BdRingFromHw(rxRing, readCoalesce, &bd)) < readCoalesce)
-	{
+	if ((c.bds = XAxiDma_BdRingFromHw(rxRing, readCoalesce, &bd)) < readCoalesce) {
 		logger->warn("Got partial batch of {}/{} BDs.", c.bds, readCoalesce);
-		if(errcnt-- == 0) {
+		if (errcnt-- == 0) {
 			hwLock.unlock();
 			throw RuntimeError("too many partial batches");
 		}

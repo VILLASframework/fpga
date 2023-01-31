@@ -103,7 +103,7 @@ Test(fpga, gpu_dma, .description = "GPU DMA tests")
 
 		if (dma != nullptr and dma->connectLoopback()) {
 			memcpyFuncs.push_back({
-			    "DMA memcpy", [&] (){
+			    "DMA memcpy", [&] () {
 				dma->makeAccesibleFromVA(src.getMemoryBlock());
 				dma->makeAccesibleFromVA(dst.getMemoryBlock());
 				dma->memcpy(src.getMemoryBlock(), dst.getMemoryBlock(), len);

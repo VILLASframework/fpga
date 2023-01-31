@@ -1,4 +1,4 @@
-/** FPGA pciecard.
+/** PCIexpress FPGA card.
  *
  * Author: Steffen Vogel <post@steffenvogel.de>
  * SPDX-FileCopyrightText: 2017 Institute for Automation of Complex Power Systems, EONERC
@@ -23,9 +23,11 @@ using namespace villas;
 using namespace villas::fpga;
 
 // Instantiate factory to register
-static PCIeCardFactory PCIeCardFactoryInstance;
+static
+PCIeCardFactory PCIeCardFactoryInstance;
 
-static const kernel::pci::Device defaultFilter((kernel::pci::Id(FPGA_PCI_VID_XILINX, FPGA_PCI_PID_VFPGA)));
+static
+const kernel::pci::Device defaultFilter((kernel::pci::Id(FPGA_PCI_VID_XILINX, FPGA_PCI_PID_VFPGA)));
 
 std::list<std::shared_ptr<PCIeCard>> PCIeCardFactory::make(json_t *json, std::shared_ptr<kernel::pci::DeviceList> pci, std::shared_ptr<kernel::vfio::Container> vc)
 {

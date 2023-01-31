@@ -1,4 +1,4 @@
-/** FPGA pciecard
+/** PCIexpress FPGA card.
  *
  * This class represents a FPGA device.
  *
@@ -106,20 +106,20 @@ public:
 		return new PCIeCard();
 	}
 
-	static Logger
-	getStaticLogger()
+	static
+	Logger getStaticLogger()
 	{
 		return villas::logging.get("pcie:card:factory");
 	}
 
-	virtual std::string
-	getName() const
+	virtual
+	std::string getName() const
 	{
 		return "pcie";
 	}
 
-	virtual std::string
-	getDescription() const
+	virtual
+	std::string getDescription() const
 	{
 		return "Xilinx PCIe FPGA cards";
 	}

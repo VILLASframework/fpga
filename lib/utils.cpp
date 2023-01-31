@@ -32,8 +32,10 @@
 
 using namespace villas;
 
-static std::shared_ptr<kernel::pci::DeviceList> pciDevices;
-static auto logger = villas::logging.get("streamer");
+static
+std::shared_ptr<kernel::pci::DeviceList> pciDevices;
+static
+auto logger = villas::logging.get("streamer");
 
 fpga::ConnectString::ConnectString(std::string& connectString, int maxPortNum) :
 	log(villas::logging.get("ConnectString")),
@@ -73,7 +75,7 @@ void fpga::ConnectString::parseString(std::string& connectString)
 
 	if (match[2] == "<->") {
 		bidirectional = true;
-	} else if(match[2] == "<-") {
+	} else if (match[2] == "<-") {
 		invert = true;
 	}
 
@@ -144,7 +146,7 @@ void fpga::setupColorHandling()
 {
 	// Handle Control-C nicely
 	struct sigaction sigIntHandler;
-	sigIntHandler.sa_handler = [](int){
+	sigIntHandler.sa_handler = [](int) {
 		std::cout << std::endl << rang::style::reset << rang::fgB::red;
 		std::cout << "Control-C detected, exiting..." << rang::style::reset << std::endl;
 		std::exit(1); // Will call the correct exit func, no unwinding of the stack though
@@ -155,7 +157,7 @@ void fpga::setupColorHandling()
 	sigaction(SIGINT, &sigIntHandler, nullptr);
 
 	// Reset color if exiting not by signal
-	std::atexit([](){
+	std::atexit([]() {
 		std::cout << rang::style::reset;
 	});
 }

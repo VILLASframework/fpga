@@ -47,7 +47,8 @@ private:
 	bool updateStatus();
 
 public:
-	static constexpr const char* rtdsOutputStreamPort = "rtds_output";
+	static constexpr
+	const char* rtdsOutputStreamPort = "rtds_output";
 
 	struct StatusControlRegister { uint32_t
 		status_ap_vld	: 1,
@@ -56,11 +57,16 @@ public:
 
 	using StatusRegister = axilite_reg_status_t;
 
-	static constexpr uintptr_t registerStatusOffset = XGPU2RTDS_CTRL_ADDR_STATUS_DATA;
-	static constexpr uintptr_t registerStatusCtrlOffset = XGPU2RTDS_CTRL_ADDR_STATUS_CTRL;
-	static constexpr uintptr_t registerFrameSizeOffset = XGPU2RTDS_CTRL_ADDR_FRAME_SIZE_DATA;
-	static constexpr uintptr_t registerFrameOffset = XGPU2RTDS_CTRL_ADDR_FRAME_BASE;
-	static constexpr uintptr_t registerFrameLength = XGPU2RTDS_CTRL_DEPTH_FRAME;
+	static constexpr
+	uintptr_t registerStatusOffset = XGPU2RTDS_CTRL_ADDR_STATUS_DATA;
+	static constexpr
+	uintptr_t registerStatusCtrlOffset = XGPU2RTDS_CTRL_ADDR_STATUS_CTRL;
+	static constexpr
+	uintptr_t registerFrameSizeOffset = XGPU2RTDS_CTRL_ADDR_FRAME_SIZE_DATA;
+	static constexpr
+	uintptr_t registerFrameOffset = XGPU2RTDS_CTRL_ADDR_FRAME_BASE;
+	static constexpr
+	uintptr_t registerFrameLength = XGPU2RTDS_CTRL_DEPTH_FRAME;
 
 public:
 	StatusRegister* registerStatus;

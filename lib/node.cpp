@@ -158,8 +158,7 @@ bool Node::loopbackPossible() const
 	return (not ports.first.empty()) and (not ports.second.empty());
 }
 
-bool Node::connectInternal(const std::string &slavePort,
-                        const std::string &masterPort)
+bool Node::connectInternal(const std::string &slavePort, const std::string &masterPort)
 {
 	(void) slavePort;
 	(void) masterPort;

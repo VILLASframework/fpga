@@ -28,11 +28,11 @@ using namespace villas::fpga::ip;
 // Special IPs that have to be initialized first. Will be initialized in the
 // same order as they appear in this list, i.e. first here will be initialized
 // first.
-static std::list<Vlnv>
-vlnvInitializationOrder = {
-    Vlnv("xilinx.com:ip:axi_pcie:"),
-    Vlnv("xilinx.com:module_ref:axi_pcie_intc:"),
-    Vlnv("xilinx.com:ip:axis_switch:"),
+static
+std::list<Vlnv> vlnvInitializationOrder = {
+	Vlnv("xilinx.com:ip:axi_pcie:"),
+	Vlnv("xilinx.com:module_ref:axi_pcie_intc:"),
+	Vlnv("xilinx.com:ip:axis_switch:"),
 };
 
 std::list<std::shared_ptr<Core>> CoreFactory::make(Card* card, json_t *json_ips)

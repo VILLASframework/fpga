@@ -26,11 +26,12 @@
 
 using namespace villas::gpu;
 
-static GpuFactory gpuFactory;
+static
+GpuFactory gpuFactory;
 
 GpuAllocator::GpuAllocator(Gpu &gpu) :
-    BaseAllocator(gpu.masterPciEAddrSpaceId),
-    gpu(gpu)
+	BaseAllocator(gpu.masterPciEAddrSpaceId),
+	gpu(gpu)
 {
 	free = [&](MemoryBlock* mem) {
 		cudaSetDevice(gpu.gpuId);
@@ -53,7 +54,7 @@ villas::gpu::GpuAllocator::getName() const
 
 
 GpuFactory::GpuFactory() :
-    Plugin("cuda", "CUDA capable GPUs")
+	Plugin("cuda", "CUDA capable GPUs")
 {
 	logger = villas::logging.get("gpu:factory");
 }
@@ -422,8 +423,8 @@ GpuAllocator::allocateBlock(size_t size)
 
 
 Gpu::Gpu(int gpuId) :
-    pImpl{std::make_unique<impl>()},
-    gpuId(gpuId)
+	pImpl{std::make_unique<impl>()},
+	gpuId(gpuId)
 {
 	logger = villas::logging.get(getName());
 

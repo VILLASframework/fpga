@@ -24,14 +24,20 @@
 
 using namespace villas;
 
-static constexpr size_t SAMPLE_SIZE		= 4;
-static constexpr size_t SAMPLE_COUNT	= 1;
-static constexpr size_t FRAME_SIZE		= SAMPLE_COUNT * SAMPLE_SIZE;
+static constexpr
+size_t SAMPLE_SIZE	= 4;
+static constexpr
+size_t SAMPLE_COUNT	= 1;
+static constexpr
+size_t FRAME_SIZE	= SAMPLE_COUNT * SAMPLE_SIZE;
 
-static constexpr size_t DOORBELL_OFFSET = SAMPLE_COUNT;
-static constexpr size_t DATA_OFFSET = 0;
+static constexpr
+size_t DOORBELL_OFFSET	= SAMPLE_COUNT;
+static constexpr
+size_t DATA_OFFSET	= 0;
 
-static void dumpMem(const uint32_t* addr, size_t len)
+static
+void dumpMem(const uint32_t* addr, size_t len)
 {
 	const size_t bytesPerLine = 16;
 	const size_t lines = (len) / bytesPerLine + 1;

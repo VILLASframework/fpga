@@ -7,6 +7,7 @@
  * SPDX-FileCopyrightText: 2017 Institute for Automation of Complex Power Systems, EONERC
  * SPDX-License-Identifier: Apache-2.0
  *********************************************************************************/
+
 #pragma once
 
 #include <set>
@@ -17,38 +18,38 @@
 namespace villas {
 namespace fpga {
 
-class Card
-{
+class Card {
 public:
-        bool polling;
-        std::shared_ptr<kernel::vfio::Device> vfioDevice;
+	bool polling;
+	std::shared_ptr<kernel::vfio::Device> vfioDevice;
 
-        // Slave address space ID to access the PCIe address space from the
-        // FPGA
-        MemoryManager::AddressSpaceId addrSpaceIdDeviceToHost;
+	// Slave address space ID to access the PCIe address space from the
+	// FPGA
+	MemoryManager::AddressSpaceId addrSpaceIdDeviceToHost;
 
-        // Address space identifier of the master address space of this FPGA
-        // card. This will be used for address resolution of all IPs on this
-        // card.
-        MemoryManager::AddressSpaceId addrSpaceIdHostToDevice;
+	// Address space identifier of the master address space of this FPGA
+	// card. This will be used for address resolution of all IPs on this
+	// card.
+	MemoryManager::AddressSpaceId addrSpaceIdHostToDevice;
 
-        std::list<std::shared_ptr<ip::Core> > ips;
+	std::list<std::shared_ptr<ip::Core> > ips;
 
-        virtual ~Card();
+	virtual
+	~Card();
 
-        bool mapMemoryBlock(const std::shared_ptr<MemoryBlock> block);
-        bool unmapMemoryBlock(const MemoryBlock &block);
+	bool mapMemoryBlock(const std::shared_ptr<MemoryBlock> block);
+	bool unmapMemoryBlock(const MemoryBlock &block);
 	std::shared_ptr<kernel::vfio::Container> vfioContainer;
 
-        std::shared_ptr<ip::Core> lookupIp(const std::string &name) const;
-        std::shared_ptr<ip::Core> lookupIp(const Vlnv &vlnv) const;
-        std::shared_ptr<ip::Core> lookupIp(const ip::IpIdentifier &id) const;
+	std::shared_ptr<ip::Core> lookupIp(const std::string &name) const;
+	std::shared_ptr<ip::Core> lookupIp(const Vlnv &vlnv) const;
+	std::shared_ptr<ip::Core> lookupIp(const ip::IpIdentifier &id) const;
 
 protected:
 	// Keep a map of already mapped memory blocks
 	std::map<MemoryManager::AddressSpaceId, std::shared_ptr<MemoryBlock>> memoryBlocksMapped;
 
-        Logger logger;
+	Logger logger;
 };
 
 } /* namespace fpga */

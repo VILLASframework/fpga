@@ -68,7 +68,8 @@ private:
 
 class GpuAllocator : public BaseAllocator<GpuAllocator> {
 public:
-	static constexpr size_t GpuPageSize = 64UL << 10;
+	static constexpr
+	size_t GpuPageSize = 64UL << 10;
 
 	GpuAllocator(Gpu &gpu);
 

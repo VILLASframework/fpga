@@ -16,7 +16,8 @@ namespace fpga {
 
 class Vlnv {
 public:
-	static constexpr char delimiter	= ':';
+	static constexpr
+	char delimiter	= ':';
 
 	Vlnv() :
 	    vendor(""),
@@ -30,26 +31,23 @@ public:
 		parseFromString(s);
 	}
 
-	static Vlnv
-	getWildcard()
+	static
+	Vlnv getWildcard()
 	{
 		return Vlnv();
 	}
 
-	std::string
-	toString() const;
+	std::string toString() const;
 
-	bool
-	operator==(const Vlnv &other) const;
+	bool operator==(const Vlnv &other) const;
 
-	bool
-	operator!=(const Vlnv &other) const
+	bool operator!=(const Vlnv &other) const
 	{
 		return !(*this == other);
 	}
 
-	friend std::ostream&
-	operator<< (std::ostream &stream, const Vlnv &vlnv)
+	friend
+	std::ostream& operator<< (std::ostream &stream, const Vlnv &vlnv)
 	{
 		return stream
 		        << (vlnv.vendor.empty()		? "*" : vlnv.vendor)	<< ":"
@@ -59,8 +57,7 @@ public:
 	}
 
 private:
-	void
-	parseFromString(std::string vlnv);
+	void parseFromString(std::string vlnv);
 
 	std::string vendor;
 	std::string library;

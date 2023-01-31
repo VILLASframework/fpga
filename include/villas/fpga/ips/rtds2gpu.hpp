@@ -80,8 +80,10 @@ private:
 	bool updateStatus();
 
 private:
-	static constexpr const char* axiInterface = "m_axi_axi_mm";
-	static constexpr const char* rtdsInputStreamPort = "rtds_input";
+	static constexpr
+	const char* axiInterface = "m_axi_axi_mm";
+	static constexpr
+	const char* rtdsInputStreamPort = "rtds_input";
 
 	XRtds2gpu xInstance;
 

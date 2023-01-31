@@ -33,8 +33,10 @@
 
 using namespace villas;
 
-static std::shared_ptr<kernel::pci::DeviceList> pciDevices;
-static auto logger = villas::logging.get("ctrl");
+static
+std::shared_ptr<kernel::pci::DeviceList> pciDevices;
+static
+auto logger = villas::logging.get("ctrl");
 
 void writeToDmaFromStdIn(std::shared_ptr<villas::fpga::ip::Dma> dma)
 {
@@ -46,16 +48,15 @@ void writeToDmaFromStdIn(std::shared_ptr<villas::fpga::ip::Dma> dma)
 	};
 	villas::MemoryAccessor<int32_t> mem[] = {*block[0], *block[1]};
 
-	for (auto b : block) {
+	for (auto b : block)
 		dma->makeAccesibleFromVA(b);
-	}
 
 	size_t cur = 0, next = 1;
 	std::ios::sync_with_stdio(false);
 	std::string line;
 	bool firstXfer = true;
 
-	while(true) {
+	while (true) {
 		// Read values from stdin
 
 		std::getline(std::cin, line);
@@ -77,9 +78,8 @@ void writeToDmaFromStdIn(std::shared_ptr<villas::fpga::ip::Dma> dma)
 		if (!firstXfer) {
 			auto bytesWritten = dma->writeComplete();
 			logger->debug("Wrote {} bytes", bytesWritten.bytes);
-		} else {
+		} else
 			firstXfer = false;
-		}
 
 		cur = next;
 		next = (next + 1) % (sizeof(mem) / sizeof(mem[0]));
@@ -97,9 +97,8 @@ void readFromDmaToStdOut(std::shared_ptr<villas::fpga::ip::Dma> dma,
 	};
 	villas::MemoryAccessor<int32_t> mem[] = {*block[0], *block[1]};
 
-	for (auto b : block) {
+	for (auto b : block)
 		dma->makeAccesibleFromVA(b);
-	}
 
 	size_t cur = 0, next = 1;
 	std::ios::sync_with_stdio(false);
@@ -113,9 +112,8 @@ void readFromDmaToStdOut(std::shared_ptr<villas::fpga::ip::Dma> dma,
 		dma->read(*block[next], block[next]->getSize());
 		auto c = dma->readComplete();
 
-		if (c.interrupts > 1) {
+		if (c.interrupts > 1)
 			logger->warn("Missed {} interrupts", c.interrupts - 1);
-		}
 
 		logger->trace("bytes: {}, intrs: {}, bds: {}",
 			c.bytes, c.interrupts, c.bds);
@@ -144,16 +142,22 @@ int main(int argc, char* argv[])
 
 		std::string fpgaName = "vc707";
 		app.add_option("--fpga", fpgaName, "Which FPGA to use");
+
 		std::string connectStr = "";
 		app.add_option("-x,--connect", connectStr, "Connect a FPGA port with another or stdin/stdout");
+
 		bool noDma = false;
 		app.add_flag("--no-dma", noDma, "Do not setup DMA, only setup FPGA and Crossbar links");
+
 		std::string outputFormat = "short";
 		app.add_option("--output-format", outputFormat, "Output format (short, long)");
+
 		bool dumpGraph = false;
 		app.add_flag("--dump-graph", dumpGraph, "Dumps the graph of memory regions into \"graph.dot\"");
+
 		bool dumpAuroraChannels = true;
 		app.add_flag("--dump-aurora", dumpAuroraChannels, "Dumps the detected Aurora channels.");
+
 		app.parse(argc, argv);
 
 		// Logging setup
@@ -208,13 +212,11 @@ int main(int argc, char* argv[])
 			// in this thread anymore
 			stdInThread = std::make_unique<std::thread>(readFromDmaToStdOut, dma, std::move(formatter));
 		}
-		if (!noDma && parsedConnectString.isSrcStdin()) {
+		if (!noDma && parsedConnectString.isSrcStdin())
 			writeToDmaFromStdIn(dma);
-		}
 
-		if (stdInThread) {
+		if (stdInThread)
 			stdInThread->join();
-		}
 	} catch (const RuntimeError &e) {
 		logger->error("Error: {}", e.what());
 		return -1;

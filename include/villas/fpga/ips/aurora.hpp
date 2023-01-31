@@ -15,8 +15,11 @@ namespace ip {
 
 class Aurora : public Node {
 public:
-	static constexpr const char* masterPort = "m_axis";
-	static constexpr const char* slavePort = "s_axis";
+	static constexpr
+	const char* masterPort = "m_axis";
+
+	static constexpr
+	const char* slavePort = "s_axis";
 
 	virtual
 	void dump() override;
@@ -47,7 +50,8 @@ public:
 	resetFrameCounters();
 
 private:
-	static constexpr const char registerMemory[] = "reg0";
+	static constexpr
+	const char registerMemory[] = "reg0";
 };
 
 } /* namespace ip */

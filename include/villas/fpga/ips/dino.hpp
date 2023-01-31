@@ -15,8 +15,11 @@ namespace ip {
 
 class Dino : public Node {
 public:
-	static constexpr const char* masterPort = "m_axis";
-	static constexpr const char* slavePort = "s_axis";
+	static constexpr
+	const char* masterPort = "m_axis";
+
+	static constexpr
+	const char* slavePort = "s_axis";
 
 	const StreamVertex& getDefaultSlavePort() const
 	{

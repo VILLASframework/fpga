@@ -15,7 +15,8 @@
 #include <spdlog/spdlog.h>
 
 // Returns true if there is at least one enabled test in this suite
-static bool suite_enabled(struct criterion_test_set *tests, const char *name)
+static
+bool suite_enabled(struct criterion_test_set *tests, const char *name)
 {
 	FOREACH_SET(void *suite_ptr, tests->suites) {
 		struct criterion_suite_set *suite = (struct criterion_suite_set *) suite_ptr;

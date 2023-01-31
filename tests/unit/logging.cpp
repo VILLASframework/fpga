@@ -22,11 +22,12 @@ extern "C" {
 }
 
 struct criterion_prefix_data {
-    const char *prefix;
-    const char *color;
+	const char *prefix;
+	const char *color;
 };
 
-static int format_msg(char *buf, size_t buflen, const char *msg, va_list args)
+static
+int format_msg(char *buf, size_t buflen, const char *msg, va_list args)
 {
 	int len = vsnprintf(buf, buflen, msg, args);
 

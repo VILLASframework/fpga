@@ -36,9 +36,12 @@ We kindly ask all academic publications employing components of VILLASframework 
 
 ## Contact
 
+[![EONERC ACS Logo](doc/pictures/eonerc_logo.png)](http://www.acs.eonerc.rwth-aachen.de)
+
 - Niklas Eiling <niklas.eiling@eonerc.rwth-aachen.de>
 - Steffen Vogel <post@steffenvogel.de>
 - Daniel Krebs <dkrebs@eonerc.rwth-aachen.de>
 
 [Institute for Automation of Complex Power Systems (ACS)](http://www.acs.eonerc.rwth-aachen.de)
+[EON Energy Research Center (EONERC)](http://www.eonerc.rwth-aachen.de)
 [RWTH University Aachen, Germany](http://www.rwth-aachen.de)

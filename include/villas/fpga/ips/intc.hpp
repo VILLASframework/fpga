@@ -19,7 +19,8 @@ namespace ip {
 class InterruptController : public Core {
 public:
 	using IrqMaskType = uint32_t;
-	static constexpr int maxIrqs = 32;
+	static constexpr
+	int maxIrqs = 32;
 
 	virtual
 	~InterruptController();
@@ -47,7 +48,8 @@ public:
 
 private:
 
-	static constexpr char registerMemory[] = "reg0";
+	static constexpr
+	char registerMemory[] = "reg0";
 
 	std::list<MemoryBlockName> getMemoryBlocks() const
 	{

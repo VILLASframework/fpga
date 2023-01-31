@@ -30,7 +30,8 @@ private:
 
 	XFlash xflash;
 
-	static constexpr char registerMemory[] = "Reg";
+	static constexpr
+	char registerMemory[] = "Reg";
 
 	std::list<MemoryBlockName> getMemoryBlocks() const
 	{

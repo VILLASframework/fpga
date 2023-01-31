@@ -25,11 +25,13 @@
 
 using namespace villas;
 
-static std::shared_ptr<kernel::pci::DeviceList> pciDevices;
+static
+std::shared_ptr<kernel::pci::DeviceList> pciDevices;
 
 FpgaState state;
 
-static void init()
+static
+void init()
 {
 	FILE *f;
 	json_error_t err;
@@ -69,7 +71,8 @@ static void init()
 	json_decref(json);
 }
 
-static void fini()
+static
+void fini()
 {
 	// Release all cards
 	state.cards.clear();

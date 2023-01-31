@@ -33,9 +33,12 @@ public:
 	size_t read(void* buf, size_t len);
 
 private:
-	static constexpr char registerMemory[] = "Mem0";
-	static constexpr char axi4Memory[] = "Mem1";
-	static constexpr char irqName[] = "interrupt";
+	static constexpr
+	char registerMemory[] = "Mem0";
+	static constexpr
+	char axi4Memory[] = "Mem1";
+	static constexpr
+	char irqName[] = "interrupt";
 
 	std::list<MemoryBlockName> getMemoryBlocks() const
 	{

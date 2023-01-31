@@ -47,19 +47,25 @@ protected:
 
 class BufferedSampleFormatter {
 public:
-	virtual void format(float value) = 0;
-	virtual void output(std::ostream& out)
+	virtual
+	void format(float value) = 0;
+
+	virtual
+	void output(std::ostream& out)
 	{
 		out << buf.data() << std::flush;
 		clearBuf();
 	}
-	virtual void clearBuf()
+
+	virtual
+	void clearBuf()
 	{
 		for (size_t i = 0; i < bufSamples && buf[i*bufSampleSize] != '\0'; i++) {
 			buf[i*bufSampleSize] = '\0';
 		}
 		currentBufLoc = 0;
 	}
+
 protected:
 	std::vector<char> buf;
 	const size_t bufSamples;
@@ -73,7 +79,9 @@ protected:
 		currentBufLoc(0) {};
 	BufferedSampleFormatter() = delete;
 	BufferedSampleFormatter(const BufferedSampleFormatter&) = delete;
-	virtual char* nextBufPos()
+
+	virtual
+	char* nextBufPos()
 	{
 		return &buf[(currentBufLoc++)*bufSampleSize];
 	}
@@ -84,7 +92,8 @@ public:
 	BufferedSampleFormatterShort(size_t bufSizeInSamples) :
 		BufferedSampleFormatter(bufSizeInSamples, formatStringSize) {};
 
-	virtual void format(float value) override
+	virtual
+	void format(float value) override
 	{
 		if (std::snprintf(nextBufPos(), formatStringSize+1, formatString, value) > (int)formatStringSize) {
 			throw RuntimeError("Output buffer too small");
@@ -92,8 +101,11 @@ public:
 	}
 
 protected:
-	static constexpr char formatString[] = "%7f\n";
-	static constexpr size_t formatStringSize = 9;
+	static constexpr
+	char formatString[] = "%7f\n";
+
+	static constexpr
+	size_t formatStringSize = 9;
 };
 
 class BufferedSampleFormatterLong : public BufferedSampleFormatter {
@@ -102,7 +114,8 @@ public:
 		BufferedSampleFormatter(bufSizeInSamples, formatStringSize),
 		sampleCnt(0) {};
 
-	virtual void format(float value) override
+	virtual
+	void format(float value) override
 	{
 		if (std::snprintf(nextBufPos(), formatStringSize+1, formatString, sampleCnt, value) > (int)formatStringSize) {
 			throw RuntimeError("Output buffer too small");
@@ -111,8 +124,12 @@ public:
 	}
 
 protected:
-	static constexpr char formatString[] = "%05zd: %7f\n";
-	static constexpr size_t formatStringSize = 16;
+	static constexpr
+	char formatString[] = "%05zd: %7f\n";
+
+	static constexpr
+	size_t formatStringSize = 16;
+
 	size_t sampleCnt;
 };
 

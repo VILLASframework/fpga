@@ -101,7 +101,8 @@ Test(fpga, rtds, .description = "RTDS")
 //				for (int i = 0;)
 //				rdtsc_sleep();
 
-//				static constexpr int loopCount = 10000;
+//				static constexpr
+//				int loopCount = 10000;
 //				if (i % loopCount == 0) {
 //					const auto end = std::chrono::high_resolution_clock::now();
 

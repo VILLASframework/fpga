@@ -47,8 +47,7 @@ bool AxiStreamSwitch::init()
 	return true;
 }
 
-bool AxiStreamSwitch::connectInternal(const std::string &portSlave,
-                                 const std::string &portMaster)
+bool AxiStreamSwitch::connectInternal(const std::string &portSlave, const std::string &portMaster)
 {
 	// Check if slave port exists
 	try {

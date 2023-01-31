@@ -15,7 +15,7 @@ using namespace villas::fpga;
 
 Card::~Card()
 {
-        // Ensure IP destructors are called before memory is unmapped
+	// Ensure IP destructors are called before memory is unmapped
 	ips.clear();
 
 	auto &mm = MemoryManager::get();
@@ -35,24 +35,24 @@ Card::~Card()
 
 std::shared_ptr<ip::Core> Card::lookupIp(const std::string &name) const
 {
-        for(auto &ip : ips) {
-                if(*ip == name) {
-                        return ip;
-                }
-        }
+	for (auto &ip : ips) {
+		if (*ip == name) {
+			return ip;
+	        }
+	}
 
-        return nullptr;
+	return nullptr;
 }
 
 std::shared_ptr<ip::Core> Card::lookupIp(const Vlnv &vlnv) const
 {
-        for(auto &ip : ips) {
-                if(*ip == vlnv) {
-                        return ip;
-                }
-        }
+	for (auto &ip : ips) {
+	        if (*ip == vlnv) {
+	                return ip;
+	        }
+	}
 
-        return nullptr;
+	return nullptr;
 }
 
 std::shared_ptr<ip::Core> Card::lookupIp(const ip::IpIdentifier &id) const
@@ -68,9 +68,8 @@ std::shared_ptr<ip::Core> Card::lookupIp(const ip::IpIdentifier &id) const
 
 bool Card::unmapMemoryBlock(const MemoryBlock& block)
 {
-	if (memoryBlocksMapped.find(block.getAddrSpaceId()) == memoryBlocksMapped.end()) {
+	if (memoryBlocksMapped.find(block.getAddrSpaceId()) == memoryBlocksMapped.end())
 		throw std::runtime_error("Block " + std::to_string(block.getAddrSpaceId()) + " is not mapped but was requested to be unmapped.");
-	}
 
 	auto &mm = MemoryManager::get();
 
@@ -79,8 +78,7 @@ bool Card::unmapMemoryBlock(const MemoryBlock& block)
 	const uintptr_t iova = translation.getLocalAddr(0);
 	const size_t size = translation.getSize();
 
-	logger->debug("Unmap block {} at IOVA {:#x} of size {:#x}",
-			block.getAddrSpaceId(), iova, size);
+	logger->debug("Unmap block {} at IOVA {:#x} of size {:#x}", block.getAddrSpaceId(), iova, size);
 	vfioContainer->memoryUnmap(iova, size);
 
 	memoryBlocksMapped.erase(block.getAddrSpaceId());
@@ -125,5 +123,5 @@ bool Card::mapMemoryBlock(const std::shared_ptr<MemoryBlock> block)
 	// Remember that this block has already been mapped for later
 	memoryBlocksMapped.insert({addrSpaceId, block});
 
-        return true;
+	return true;
 }

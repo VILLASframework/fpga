@@ -41,7 +41,8 @@ public:
 		return true;
 	}
 
-	virtual bool isFinished()
+	virtual
+	bool isFinished()
 	{
 		updateRunningStatus();
 
@@ -108,9 +109,11 @@ private:
 protected:
 	// Memory block handling
 
-	static constexpr const char* registerMemory = "Reg";
+	static constexpr
+	const char* registerMemory = "Reg";
 
-	virtual std::list<MemoryBlockName> getMemoryBlocks() const
+	virtual
+	std::list<MemoryBlockName> getMemoryBlocks() const
 	{
 		return {
 			registerMemory
@@ -120,10 +123,14 @@ protected:
 public:
 	// Register definitions
 
-	static constexpr uintptr_t registerControlAddr			= 0x00;
-	static constexpr uintptr_t registerGlobalIntEnableAddr	= 0x04;
-	static constexpr uintptr_t registerIntEnableAddr		= 0x08;
-	static constexpr uintptr_t registerIntStatusAddr		= 0x0c;
+	static constexpr
+	uintptr_t registerControlAddr		= 0x00;
+	static constexpr
+	uintptr_t registerGlobalIntEnableAddr	= 0x04;
+	static constexpr
+	uintptr_t registerIntEnableAddr		= 0x08;
+	static constexpr
+	uintptr_t registerIntStatusAddr		= 0x0c;
 
 	union ControlRegister {
 		uint32_t value;

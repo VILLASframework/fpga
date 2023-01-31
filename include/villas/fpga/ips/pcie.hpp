@@ -26,8 +26,10 @@ public:
 	bool init() override;
 
 private:
-	static constexpr char axiInterface[] = "M_AXI";
-	static constexpr char pcieMemory[] = "BAR0";
+	static constexpr
+	char axiInterface[] = "M_AXI";
+	static constexpr
+	char pcieMemory[] = "BAR0";
 
 	struct AxiBar {
 		uintptr_t base;

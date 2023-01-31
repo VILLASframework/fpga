@@ -58,8 +58,10 @@ private:
 		};
 	}
 
-	static constexpr char irqName[] = "generateout0";
-	static constexpr char registerMemory[] = "Reg";
+	static constexpr
+	char irqName[] = "generateout0";
+	static constexpr
+	char registerMemory[] = "Reg";
 
 	XTmrCtr xTmr;
 };
