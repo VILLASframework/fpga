@@ -13,10 +13,37 @@ using namespace villas::fpga;
 
 int PlatformCard::Test()
 {
+    /*  Factory
+        card->name = std::string(card_name);
+        card->vfioContainer = vc;
+        card->affinity = affinity;
+        card->doReset = do_reset != 0;
+        card->polling = (polling != 0);
+        card->pdev
+        {
+            pciDevice* lookupPci
+            {
+                std::make_shared<Device>(id, slot)
+            }
+        }
+        card -> init()
+        {
+            vfioDevice = vfioContainer->attachDevice(pdev);
+            vfioDevice->pciEnable()
+        }
+        card->ips = ip::CoreFactory::make(card.get(), json_ips);
+        + some messing with cores through getIp func
+    */
         auto vfioContainer = std::make_shared<kernel::vfio::Container>();
 
+        /* PCI System (finds Device for vfio)
+        
+        */
         //const int IOMMU_GROUP = 2;
-        PlatformCard card = PlatformCard(vfioContainer);
+
+        
+
+        //PlatformCard card = PlatformCard(vfioContainer);
 
         return 0;
 }
@@ -26,14 +53,5 @@ PlatformCard::PlatformCard(std::shared_ptr<kernel::vfio::Container> vfioContaine
         this -> vfioContainer = vfioContainer;
 
         logger = villas::logging.get("PlatformCard");
-        // logger->info("Initializing FPGA card {}", DEV_NAME);
-
-        // Attach PCIe card to VFIO container
-        // vfioDevice = vfioContainer->attachDevice(DEV_NAME, DEV_GROUP);
-
-        // // Enable memory access and PCI bus mastering for DMA
-        // if(not vfioDevice->pciEnable()) {
-        //         logger->error("Failed to enable PCI device");
-        //         return false;
-        // }
+        
 }
