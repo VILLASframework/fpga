@@ -22,10 +22,7 @@ class Card
 {
 public:
         bool polling;
-
-        std::string name; // The name of the FPGA card
-        std::shared_ptr<kernel::vfio::Container> vfioContainer;
-        std::shared_ptr<kernel::vfio::Device> vfioDevice;
+        std::shared_ptr<kernel::vfio::Device> vfioDevice; //? Only used by intc
 
         // Slave address space ID to access the PCIe address space from the
         // FPGA
@@ -52,6 +49,7 @@ protected:
 	std::map<MemoryManager::AddressSpaceId, std::shared_ptr<MemoryBlock>> memoryBlocksMapped;
 
         Logger logger;
+
 };
 
 } // namespace fpga
