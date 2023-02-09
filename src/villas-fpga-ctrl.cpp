@@ -33,6 +33,8 @@
 #include <villas/fpga/utils.hpp>
 #include <villas/fpga/vlnv.hpp>
 
+#include <villas/fpga/platform_card.hpp>
+
 using namespace villas;
 
 static std::shared_ptr<kernel::pci::DeviceList> pciDevices;
@@ -172,111 +174,105 @@ void readFromDmaToStdOut(
   }
 }
 
-int main(int argc, char *argv[]) {
-  // Command Line Parser
-  CLI::App app{"VILLASfpga data output"};
+int main()
+{
+        return fpga::PlatformCard::Test();
 
-  try {
-    std::string configFile;
-    app.add_option("-c,--config", configFile, "Configuration file")
-        ->check(CLI::ExistingFile);
+        /*
+	// Command Line Parser
+	CLI::App app{"VILLASfpga data output"};
 
-    std::string fpgaName = "vc707";
-    app.add_option("--fpga", fpgaName, "Which FPGA to use");
-    std::vector<std::string> connectStr;
-    app.add_option("-x,--connect", connectStr,
-                   "Connect a FPGA port with another or stdin/stdout");
-    bool noDma = false;
-    app.add_flag("--no-dma", noDma,
-                 "Do not setup DMA, only setup FPGA and Crossbar links");
-    std::string outputFormat = "short";
-    app.add_option("--output-format", outputFormat,
-                   "Output format (short, long)");
-    bool dumpGraph = false;
-    app.add_flag("--dump-graph", dumpGraph,
-                 "Dumps the graph of memory regions into \"graph.dot\"");
-    bool dumpAuroraChannels = true;
-    app.add_flag("--dump-aurora", dumpAuroraChannels,
-                 "Dumps the detected Aurora channels.");
-    app.parse(argc, argv);
+	try {
+		std::string configFile;
+		app.add_option("-c,--config", configFile, "Configuration file")
+				->check(CLI::ExistingFile);
 
-    // Logging setup
+		std::string fpgaName = "vc707";
+		app.add_option("--fpga", fpgaName, "Which FPGA to use");
+		std::string connectStr = "";
+		app.add_option("-x,--connect", connectStr, "Connect a FPGA port with another or stdin/stdout");
+		bool noDma = false;
+		app.add_flag("--no-dma", noDma, "Do not setup DMA, only setup FPGA and Crossbar links");
+		std::string outputFormat = "short";
+		app.add_option("--output-format", outputFormat, "Output format (short, long)");
+		bool dumpGraph = false;
+		app.add_flag("--dump-graph", dumpGraph, "Dumps the graph of memory regions into \"graph.dot\"");
+		bool dumpAuroraChannels = true;
+		app.add_flag("--dump-aurora", dumpAuroraChannels, "Dumps the detected Aurora channels.");
+		app.parse(argc, argv);
 
-    logging.setLevel(spdlog::level::debug);
-    fpga::setupColorHandling();
+		// Logging setup
 
-    if (configFile.empty()) {
-      logger->error(
-          "No configuration file provided/ Please use -c/--config argument");
-      return 1;
-    }
+		logging.setLevel(spdlog::level::debug);
+		fpga::setupColorHandling();
 
-    auto card = fpga::setupFpgaCard(configFile, fpgaName);
+		if (configFile.empty()) {
+			logger->error("No configuration file provided/ Please use -c/--config argument");
+			return 1;
+		}
 
-    if (dumpGraph) {
-      auto &mm = MemoryManager::get();
-      mm.getGraph().dump("graph.dot");
-    }
+		auto card = fpga::setupFpgaCard(configFile, fpgaName);
 
-    if (dumpAuroraChannels) {
-      auto aurora_channels = getAuroraChannels(card);
-      for (auto aurora : *aurora_channels)
-        aurora->dump();
-    }
-    bool writeToStdout = false;
-    bool readFromStdin = false;
-    // Configure Crossbar switch
-    for (std::string str : connectStr) {
-      const fpga::ConnectString parsedConnectString(str);
-      parsedConnectString.configCrossBar(card);
-      if (parsedConnectString.isSrcStdin()) {
-        readFromStdin = true;
-        if (parsedConnectString.isBidirectional()) {
-          writeToStdout = true;
-        }
-      }
-      if (parsedConnectString.isDstStdout()) {
-        writeToStdout = true;
-        if (parsedConnectString.isBidirectional()) {
-          readFromStdin = true;
-        }
-      }
-    }
-    if (writeToStdout || readFromStdin) {
-      auto dma = std::dynamic_pointer_cast<fpga::ip::Dma>(
-          card->lookupIp(fpga::Vlnv("xilinx.com:ip:axi_dma:")));
-      if (dma == nullptr) {
-        logger->error("No DMA found on FPGA ");
-        throw std::runtime_error("No DMA found on FPGA");
-      }
-      std::unique_ptr<std::thread> stdInThread = nullptr;
-      if (!noDma && writeToStdout) {
-        auto formatter = fpga::getBufferedSampleFormatter(outputFormat, 16);
-        // We copy the dma shared ptr but move the fomatter unqiue ptr as we don't need it
-        // in this thread anymore
-        stdInThread = std::make_unique<std::thread>(readFromDmaToStdOut, dma,
-                                                    std::move(formatter));
-      }
-      if (!noDma && readFromStdin) {
-        writeToDmaFromStdIn(dma);
-      }
+		std::vector<std::shared_ptr<fpga::ip::AuroraXilinx>> aurora_channels;
+		for (int i = 0; i < 4; i++) {
+			auto name = fmt::format("aurora_8b10b_ch{}", i);
+			auto id = fpga::ip::IpIdentifier("xilinx.com:ip:aurora_8b10b:", name);
+			auto aurora = std::dynamic_pointer_cast<fpga::ip::AuroraXilinx>(card->lookupIp(id));
+			if (aurora == nullptr) {
+				logger->error("No Aurora interface found on FPGA");
+				return 1;
+			}
 
-      if (stdInThread) {
-        stdInThread->join();
-      }
-    }
-  } catch (const RuntimeError &e) {
-    logger->error("Error: {}", e.what());
-    return -1;
-  } catch (const CLI::ParseError &e) {
-    return app.exit(e);
-  } catch (const std::exception &e) {
-    logger->error("Error: {}", e.what());
-    return -1;
-  } catch (...) {
-    logger->error("Unknown error");
-    return -1;
-  }
+			aurora_channels.push_back(aurora);
+		}
 
-  return 0;
+		auto dma = std::dynamic_pointer_cast<fpga::ip::Dma>
+					(card->lookupIp(fpga::Vlnv("xilinx.com:ip:axi_dma:")));
+		if (dma == nullptr) {
+			logger->error("No DMA found on FPGA ");
+			return 1;
+		}
+
+		if (dumpGraph) {
+			auto &mm = MemoryManager::get();
+			mm.getGraph().dump("graph.dot");
+		}
+
+		if (dumpAuroraChannels) {
+			for (auto aurora : aurora_channels)
+				aurora->dump();
+		}
+		// Configure Crossbar switch
+		const fpga::ConnectString parsedConnectString(connectStr);
+		parsedConnectString.configCrossBar(dma, aurora_channels);
+
+		std::unique_ptr<std::thread> stdInThread = nullptr;
+		if (!noDma && parsedConnectString.isDstStdout()) {
+			auto formatter = fpga::getBufferedSampleFormatter(outputFormat, 16);
+			// We copy the dma shared ptr but move the fomatter unqiue ptr as we don't need it
+			// in this thread anymore
+			stdInThread = std::make_unique<std::thread>(readFromDmaToStdOut, dma, std::move(formatter));
+		}
+		if (!noDma && parsedConnectString.isSrcStdin()) {
+			writeToDmaFromStdIn(dma);
+		}
+
+		if (stdInThread) {
+			stdInThread->join();
+		}
+	} catch (const RuntimeError &e) {
+		logger->error("Error: {}", e.what());
+		return -1;
+	} catch (const CLI::ParseError &e) {
+		return app.exit(e);
+	} catch (const std::exception &e) {
+		logger->error("Error: {}", e.what());
+		return -1;
+	} catch (...) {
+		logger->error("Unknown error");
+		return -1;
+	}
+
+	return 0;
+	*/
 }
