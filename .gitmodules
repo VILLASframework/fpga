@@ -6,6 +6,7 @@
 [submodule "common"]
 	path = common
 	url = https://github.com/VILLASframework/common.git
+	branch = feature/vfioPlatform
 [submodule "thirdparty/libxil"]
 	path = thirdparty/libxil
 	url = https://github.com/VILLASframework/libxil.git
