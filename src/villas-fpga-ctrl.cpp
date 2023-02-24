@@ -33,8 +33,6 @@
 #include <villas/fpga/utils.hpp>
 #include <villas/fpga/vlnv.hpp>
 
-#include <villas/fpga/platform_card.hpp>
-
 using namespace villas;
 
 static std::shared_ptr<kernel::pci::DeviceList> pciDevices;
