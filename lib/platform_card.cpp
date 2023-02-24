@@ -50,7 +50,7 @@ int PlatformCard::Test()
         auto vfioContainer = std::make_shared<kernel::vfio::Container>();
         // DMESG: xilinx-vdma a0000000.dma: Adding to iommu group 2
         const int IOMMU_GROUP = 2;
-        unique_ptr<kernel::vfio::Group> group = make_unique(IOMMU_GROUP, true);
+        auto group = std::make_unique<kernel::vfio::Group>(IOMMU_GROUP, true);
         //vfioContainer -> attachGroup()
         //vfioContainer -> attachDevice("xilinx-vdma a0000000.dma", IOMMU_GROUP);
 
