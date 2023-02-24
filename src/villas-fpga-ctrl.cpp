@@ -33,8 +33,6 @@
 #include <villas/fpga/utils.hpp>
 #include <villas/fpga/vlnv.hpp>
 
-#include <villas/fpga/platform_card.hpp>
-
 using namespace villas;
 
 static std::shared_ptr<kernel::pci::DeviceList> pciDevices;
@@ -174,11 +172,8 @@ void readFromDmaToStdOut(
   }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-        return fpga::PlatformCard::Test();
-
-        /*
 	// Command Line Parser
 	CLI::App app{"VILLASfpga data output"};
 
@@ -274,5 +269,4 @@ int main()
 	}
 
 	return 0;
-	*/
 }
