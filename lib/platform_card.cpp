@@ -49,17 +49,17 @@ int PlatformCard::Test()
             + some messing with cores through getIp func
         */
 
-        auto vfioContainer = std::make_shared<kernel::vfio::Container>();
         // DMESG: xilinx-vdma a0000000.dma: Adding to iommu group 2
+
+
         const int IOMMU_GROUP = 2;
-        auto group = std::make_unique<kernel::vfio::Group>(IOMMU_GROUP, true);
-        // vfioContainer -> attachGroup()
-        // vfioContainer -> attachDevice("xilinx-vdma a0000000.dma",
-        // IOMMU_GROUP);
+        auto group = std::make_shared<kernel::vfio::Group>(IOMMU_GROUP, true);
+
+        auto vfioContainer = std::make_shared<kernel::vfio::Container>();
+        vfioContainer->attachGroup(group);
 
         return 0;
 }
-
 
 PlatformCard::PlatformCard(
     std::shared_ptr<kernel::vfio::Container> vfioContainer)
