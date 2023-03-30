@@ -13,3 +13,4 @@ build/
 graph.dot
 
 .clang-format
+miob/
