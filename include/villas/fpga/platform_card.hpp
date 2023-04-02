@@ -21,8 +21,6 @@ public:
 
         void connect();
 
-        static int Test();
-
 private:
 };
 
