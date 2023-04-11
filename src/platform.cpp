@@ -46,8 +46,10 @@ void writeToDmaFromStdIn(std::shared_ptr<villas::fpga::ip::Dma> dma)
                 if(!state)
                         logger->error("Failed to write to device");
 
-                auto writeComp = dma->writeComplete();
-                logger->debug("Wrote {} bytes", writeComp.bytes);
+                // auto writeComp = dma->writeComplete();
+                usleep(5 * SEC_IN_USEC); // some magic numbers
+
+                // logger->debug("Wrote {} bytes", writeComp.bytes);
         }
         // auto &alloc = villas::HostRam::getAllocator();
 
@@ -180,7 +182,8 @@ int main()
             card->lookupIp(fpga::Vlnv("xilinx.com:ip:axi_dma:")));
 
         writeToDmaFromStdIn(dma);
-        usleep(5 * SEC_IN_USEC); // some magic numbers
+        auto formatter = fpga::getBufferedSampleFormatter("short", 16);
+        readFromDmaToStdOut(dma, std::move(formatter));
 
         return 0;
 }
