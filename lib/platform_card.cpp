@@ -80,162 +80,123 @@ void PlatformCard::connect()
 
 std::list<std::shared_ptr<PlatformCard> >
 PlatformCardFactory::make(json_t *json,
-                          std::shared_ptr<kernel::vfio::Container> vc)
+                          std::shared_ptr<kernel::vfio::Container> vc,
+						  const std::filesystem::path& searchPath)			  
 {
-        std::list<std::shared_ptr<PlatformCard> > cards;
+    std::list<std::shared_ptr<PlatformCard>> cards;
+	auto logger = villas::logging.get("PlatformCard");
 
-        const char *card_name;
-        json_t *json_card;
-        json_object_foreach(json, card_name, json_card)
-        {
-                json_t *json_ips = nullptr;
-                json_t *json_paths = nullptr;
-                const char *pci_slot = nullptr;
-                const char *pci_id = nullptr;
-                int do_reset = 0;
-                int affinity = 0;
-                int polling = 0;
+	const char *card_name;
+	json_t *json_card;
+	json_object_foreach(json, card_name, json_card) {
+		logger->info("Found config for FPGA card {}", card_name);
 
-                json_error_t err;
-                int ret = json_unpack_ex(
-                    json_card,
-                    &err,
-                    0,
-                    "{ s: o, s?: i, s?: b, s?: s, s?: s, s?: b, s?: o }",
-                    "ips",
-                    &json_ips,
-                    "affinity",
-                    &affinity,
-                    "do_reset",
-                    &do_reset,
-                    "slot",
-                    &pci_slot,
-                    "id",
-                    &pci_id,
-                    "polling",
-                    &polling,
-                    "paths",
-                    &json_paths);
+		json_t*     json_ips = nullptr;
+		json_t*     json_paths = nullptr;
+		const char* pci_slot = nullptr;
+		const char* pci_id   = nullptr;
+		int         do_reset = 0;
+		int         affinity = 0;
+		int 	    polling  = 0;
 
-                if(ret != 0) {
-                        throw ConfigError(json_card,
-                                          err,
-                                          "",
-                                          "Failed to parse card");
-                }
+		json_error_t err;
+		int ret = json_unpack_ex(json_card, &err, 0, "{ s: o, s?: i, s?: b, s?: s, s?: s, s?: b, s?: o }",
+			"ips",		&json_ips,
+			"affinity", 	&affinity,
+			"do_reset", 	&do_reset,
+			"slot", 	&pci_slot,
+		    "id", 		&pci_id,
+			"polling", 	&polling,
+			"paths", 	&json_paths);
 
-                auto card = std::make_unique<PlatformCard>(vc);
-                card->polling = (polling != 0);
+		if (ret != 0)
+			throw ConfigError(json_card, err, "", "Failed to parse card");
 
-                card->connect();
+		auto card = std::make_unique<PlatformCard>(vc);
 
-                // Load IPs from a separate json file
-                if(json_is_string(json_ips)) {
-                        auto json_ips_fn = json_string_value(json_ips);
-                        json_ips = json_load_file(json_ips_fn, 0, nullptr);
-                        if(json_ips == nullptr)
-                                throw ConfigError(
-                                    json_ips,
-                                    "node-config-fpga-ips",
-                                    "Failed to load FPGA IP cores from {}",
-                                    json_ips_fn);
-                }
+		// Populate generic properties
+		card->name = std::string(card_name);
+		card->vfioContainer = vc;
+		card->affinity = affinity;
+		card->doReset = do_reset != 0;
+		card->polling = (polling != 0);
 
-                if(not json_is_object(json_ips))
-                        throw ConfigError(
-                            json_ips,
-                            "node-config-fpga-ips",
-                            "FPGA IP core list must be an object!");
+		card->connect();
 
-                card->ips = ip::CoreFactory::make(card.get(), json_ips);
-                if(card->ips.empty())
-                        throw ConfigError(
-                            json_ips,
-                            "node-config-fpga-ips",
-                            "Cannot initialize IPs of FPGA card {}",
-                            card_name);
+		// if (not card->init()) {
+		// 	logger->warn("Cannot start FPGA card {}", card_name);
+		// 	continue;
+		// }
 
-                // Additional static paths for AXI-Steram switch
-                if(json_paths != nullptr) {
-                        if(not json_is_array(json_paths))
-                                throw ConfigError(json_paths,
-                                                  err,
-                                                  "",
-                                                  "Switch path configuration "
-                                                  "must be an array");
+		// Load IPs from a separate json file
+		if (!json_is_string(json_ips)) {
+			logger->debug("FPGA IP cores config item is not a string.");
+			throw ConfigError(json_ips, "node-config-fpga-ips", "FPGA IP cores config item is not a string.");
+		}
+		if (!searchPath.empty()) {
+			std::filesystem::path json_ips_path = searchPath / json_string_value(json_ips);
+			logger->debug("searching for FPGA IP cors config at {}", json_ips_path);
+			json_ips = json_load_file(json_ips_path.c_str(), 0, nullptr);
+		}
+		if (json_ips == nullptr) {
+			json_ips = json_load_file(json_string_value(json_ips), 0, nullptr);
+			logger->debug("searching for FPGA IP cors config at {}", json_string_value(json_ips));
+			if (json_ips == nullptr) {
+				throw ConfigError(json_ips, "node-config-fpga-ips", "Failed to find FPGA IP cores config");
+			}
+		}
 
-                        size_t i;
-                        json_t *json_path;
-                        json_array_foreach(json_paths, i, json_path)
-                        {
-                                const char *from, *to;
-                                int reverse = 0;
+		if (not json_is_object(json_ips))
+			throw ConfigError(json_ips, "node-config-fpga-ips", "FPGA IP core list must be an object!");
 
-                                ret = json_unpack_ex(json_path,
-                                                     &err,
-                                                     0,
-                                                     "{ s: s, s: s, s?: b }",
-                                                     "from",
-                                                     &from,
-                                                     "to",
-                                                     &to,
-                                                     "reverse",
-                                                     &reverse);
-                                if(ret != 0)
-                                        throw ConfigError(
-                                            json_path,
-                                            err,
-                                            "",
-                                            "Cannot parse switch path config");
+		card->ips = ip::CoreFactory::make(card.get(), json_ips);
+		if (card->ips.empty())
+			throw ConfigError(json_ips, "node-config-fpga-ips", "Cannot initialize IPs of FPGA card {}", card_name);
 
-                                auto masterIpCore = card->lookupIp(from);
-                                if(!masterIpCore)
-                                        throw ConfigError(json_path,
-                                                          "",
-                                                          "Unknown IP {}",
-                                                          from);
+		// if (not card->check())
+		// 	throw RuntimeError("Checking of FPGA card {} failed", card_name);
 
-                                auto slaveIpCore = card->lookupIp(to);
-                                if(!slaveIpCore)
-                                        throw ConfigError(json_path,
-                                                          "",
-                                                          "Unknown IP {}",
-                                                          to);
+		// Additional static paths for AXI-Steram switch
+		if (json_paths != nullptr) {
+			if (not json_is_array(json_paths))
+				throw ConfigError(json_paths, err, "", "Switch path configuration must be an array");
 
-                                auto masterIpNode
-                                    = std::dynamic_pointer_cast<ip::Node>(
-                                        masterIpCore);
-                                if(!masterIpNode)
-                                        throw ConfigError(
-                                            json_path,
-                                            "",
-                                            "IP {} is not a streaming node",
-                                            from);
+			size_t i;
+			json_t *json_path;
+			json_array_foreach(json_paths, i, json_path) {
+				const char *from, *to;
+				int reverse = 0;
 
-                                auto slaveIpNode
-                                    = std::dynamic_pointer_cast<ip::Node>(
-                                        slaveIpCore);
-                                if(!slaveIpNode)
-                                        throw ConfigError(
-                                            json_path,
-                                            "",
-                                            "IP {} is not a streaming node",
-                                            to);
+				ret = json_unpack_ex(json_path, &err, 0, "{ s: s, s: s, s?: b }",
+					"from", &from,
+					"to", &to,
+					"reverse", &reverse
+				);
+				if (ret != 0)
+					throw ConfigError(json_path, err, "", "Cannot parse switch path config");
 
-                                if(not masterIpNode->connect(*slaveIpNode,
-                                                             reverse != 0))
-                                        throw ConfigError(
-                                            json_path,
-                                            "",
-                                            "Failed to connect node {} to {}",
-                                            from,
-                                            to);
-                        }
-                }
-        }
+				auto masterIpCore = card->lookupIp(from);
+				if (!masterIpCore)
+					throw ConfigError(json_path, "", "Unknown IP {}", from);
 
-        // Deallocate JSON config
-        json_decref(json);
+				auto slaveIpCore = card->lookupIp(to);
+				if (!slaveIpCore)
+					throw ConfigError(json_path, "", "Unknown IP {}", to);
 
-        return cards;
+				auto masterIpNode = std::dynamic_pointer_cast<ip::Node>(masterIpCore);
+				if (!masterIpNode)
+					throw ConfigError(json_path, "", "IP {} is not a streaming node", from);
+
+				auto slaveIpNode = std::dynamic_pointer_cast<ip::Node>(slaveIpCore);
+				if (!slaveIpNode)
+					throw ConfigError(json_path, "", "IP {} is not a streaming node", to);
+
+				if (not masterIpNode->connect(*slaveIpNode, reverse != 0))
+					throw ConfigError(json_path, "", "Failed to connect node {} to {}", from, to);
+			}
+		}
+
+		cards.push_back(std::move(card));
+	}
+	return cards;
 }

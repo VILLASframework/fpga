@@ -156,31 +156,68 @@ void readFromDmaToStdOut(
         }
 }
 
+
+
+std::shared_ptr<fpga::PlatformCard>
+setupCard(const std::string &configFilePath, const std::string &fpgaName)
+{
+        auto configDir = std::filesystem::path(configFilePath).parent_path();
+	auto vfioContainer = std::make_shared<kernel::vfio::Container>();
+
+	// Parse FPGA configuration
+	FILE* f = fopen(configFilePath.c_str(), "r");
+	if (!f)
+		throw RuntimeError("Cannot open config file: {}", configFilePath);
+
+	json_t* json = json_loadf(f, 0, nullptr);
+	if (!json) {
+		logger->error("Cannot parse JSON config");
+		fclose(f);
+		throw RuntimeError("Cannot parse JSON config");
+	}
+
+	fclose(f);
+
+	json_t* fpgas = json_object_get(json, "fpgas");
+	if (fpgas == nullptr) {
+		logger->error("No section 'fpgas' found in config");
+		exit(1);
+	}
+
+	// // Get the FPGA card plugin
+	// auto fpgaCardFactory = plugin::registry->lookup<fpga::PCIeCardFactory>("pcie");
+	// if (fpgaCardFactory == nullptr) {
+	// 	logger->error("No FPGA plugin found");
+	// 	exit(1);
+	// }
+
+	// Create all FPGA card instances using the corresponding plugin
+	auto cards = PlatformCardFactory::make(fpgas, vfioContainer, configDir);
+
+	std::shared_ptr<fpga::PlatformCard> card;
+	for (auto &fpgaCard : cards) {
+		if (fpgaCard->name == fpgaName) {
+			return fpgaCard;
+		}
+	}
+
+	// Deallocate JSON config
+	json_decref(json);
+
+	if (!card)
+		throw RuntimeError("FPGA card {} not found in config or not working", fpgaName);
+
+	return card;
+}
+
 int main()
 {
-        // Parse FPGA configuration
-        const std::string CONFIG_FILE_PATH = "config.json";
-        FILE *f = fopen(CONFIG_FILE_PATH.c_str(), "r");
-
-        if(!f)
-                throw RuntimeError("Cannot open config file: {}",
-                                   CONFIG_FILE_PATH);
-
-        json_t *json = json_loadf(f, 0, nullptr);
-        if(!json) {
-                fclose(f);
-                throw RuntimeError("Cannot parse JSON config");
-        }
-
-        fclose(f);
-
-        auto vc = std::make_shared<kernel::vfio::Container>();
-        std::shared_ptr<PlatformCard> card
-            = PlatformCardFactory::make(json, vc).front();
+        std::shared_ptr<PlatformCard> card = setupCard("/home/root/fpga/build/src/fpgas.json","PlatformCard");
 
         auto dma = std::dynamic_pointer_cast<fpga::ip::Dma>(
             card->lookupIp(fpga::Vlnv("xilinx.com:ip:axi_dma:")));
 
+        // Write Test
         writeToDmaFromStdIn(dma);
         auto formatter = fpga::getBufferedSampleFormatter("short", 16);
         readFromDmaToStdOut(dma, std::move(formatter));
