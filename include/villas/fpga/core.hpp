@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <spdlog/fmt/ostr.h>
+
 #include <map>
 #include <list>
 #include <memory>
@@ -60,8 +62,7 @@ public:
 		return vlnv;
 	}
 
-	friend std::ostream&
-	operator<< (std::ostream &stream, const IpIdentifier &id)
+	friend std::ostream &operator<<(std::ostream &stream, const IpIdentifier &id)
 	{
 		return stream << id.name << " vlnv=" << id.vlnv;
 	}
@@ -193,8 +194,7 @@ public:
 		return this->id != otherIp.id;
 	}
 
-	friend
-	std::ostream& operator<< (std::ostream &stream, const Core &ip)
+	friend std::ostream &operator<<(std::ostream &stream, const Core &ip)
 	{
 		return stream << ip.id;
 	}

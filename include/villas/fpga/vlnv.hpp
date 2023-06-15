@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <spdlog/fmt/ostr.h>
+
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -48,8 +50,7 @@ public:
 		return !(*this == other);
 	}
 
-	friend std::ostream&
-	operator<< (std::ostream &stream, const Vlnv &vlnv)
+	friend std::ostream &operator<<(std::ostream &stream, const Vlnv &vlnv)
 	{
 		return stream
 		        << (vlnv.vendor.empty()		? "*" : vlnv.vendor)	<< ":"

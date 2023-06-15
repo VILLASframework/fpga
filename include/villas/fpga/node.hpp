@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <spdlog/fmt/ostr.h>
+
 #include <map>
 #include <string>
 #include <jansson.h>
@@ -36,8 +38,7 @@ public:
 		return nodeName + "/" + portName + "(" + (isMaster ? "M" : "S") + ")";
 	}
 
-	friend
-	std::ostream& operator<< (std::ostream &stream, const StreamVertex &vertex)
+	friend std::ostream &operator<<(std::ostream &stream, const StreamVertex &vertex)
 	{
 		return stream << vertex.getIdentifier() << ": " << vertex.getName();
 	}
