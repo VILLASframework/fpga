@@ -125,10 +125,10 @@ int main(int argc, char* argv[])
 				//std::cerr << std::endl;
 
 				for (size_t i = 0; i*4 < bytesRead; i++) {
-					int32_t ival = mem[cur][i];
-					float fval = *((float*)(&ival)); // cppcheck-suppress invalidPointerCast
-					//std::cerr << std::hex << ival << ",";
-					std::cerr << fval << std::endl;
+					union { int32_t i; float f; } val;
+					val.i = mem[cur][i];
+					std::cerr << std::hex << val.i << ",";
+					std::cerr << val.f << std::endl;
 					/*int64_t ival = (int64_t)(mem[1] & 0xFFFF) << 48 |
 						(int64_t)(mem[1] & 0xFFFF0000) << 16 |
 						(int64_t)(mem[0] & 0xFFFF) << 16 |
