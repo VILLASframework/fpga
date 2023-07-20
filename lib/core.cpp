@@ -30,6 +30,7 @@ using namespace villas::fpga::ip;
 // same order as they appear in this list, i.e. first here will be initialized
 // first.
 static std::list<Vlnv> vlnvInitializationOrder = {
+    Vlnv("xilinx.com:ip:zynq_ultra_ps_e:"),
     Vlnv("xilinx.com:ip:axi_pcie:"),
     Vlnv("xilinx.com:module_ref:axi_pcie_intc:"),
     Vlnv("xilinx.com:ip:axis_switch:"),
