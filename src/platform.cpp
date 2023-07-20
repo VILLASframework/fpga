@@ -212,6 +212,8 @@ setupCard(const std::string &configFilePath, const std::string &fpgaName)
 
 int main()
 {
+        logging.setLevel(spdlog::level::debug);
+        
         std::shared_ptr<PlatformCard> card = setupCard("/home/root/fpga/build/src/fpgas.json","PlatformCard");
 
         auto dma = std::dynamic_pointer_cast<fpga::ip::Dma>(
