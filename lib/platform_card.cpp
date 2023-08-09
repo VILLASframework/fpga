@@ -60,22 +60,25 @@ PlatformCard::PlatformCard(
     std::shared_ptr<kernel::vfio::Container> vfioContainer)
 {
         this->vfioContainer = vfioContainer;
+        this->logger = villas::logging.get("PlatformCard");
 
-        logger = villas::logging.get("PlatformCard");
-}
-
-void PlatformCard::connect()
-{
+		// VFIO Group
         const int IOMMU_GROUP = 2;
-        const char *DEV_NAME = "a0000000.dma";
         auto group = std::make_shared<kernel::vfio::Group>(IOMMU_GROUP, true);
-
         vfioContainer->attachGroup(group);
 
-        this->vfioDevice = std::make_shared<kernel::vfio::Device>(
-            DEV_NAME,
-            group->getFileDescriptor());
-        group->attachDevice(this->vfioDevice);
+		// VFIO Devices
+		const char* DEVICES[] = {"a0000000.dma", "a0010000.axis_switch"};
+		for(const char* DEVICE : DEVICES){
+			auto vfioDevice = std::make_shared<kernel::vfio::Device>(
+				DEVICE,
+				group->getFileDescriptor());
+			this->devices.push_back(vfioDevice);
+			group->attachDevice(vfioDevice);
+		}
+
+		
+		this->vfioDevice = nullptr; //TODO: refactor
 }
 
 std::list<std::shared_ptr<PlatformCard> >
@@ -120,8 +123,6 @@ PlatformCardFactory::make(json_t *json,
 		card->affinity = affinity;
 		card->doReset = do_reset != 0;
 		card->polling = (polling != 0);
-
-		card->connect();
 
 		// if (not card->init()) {
 		// 	logger->warn("Cannot start FPGA card {}", card_name);
