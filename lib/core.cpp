@@ -1,9 +1,9 @@
-/** FPGA IP component.
+/* FPGA IP component.
  *
  * Author: Steffen Vogel <post@steffenvogel.de>
  * SPDX-FileCopyrightText: 2017 Institute for Automation of Complex Power Systems, EONERC
  * SPDX-License-Identifier: Apache-2.0
- *********************************************************************************/
+ */
 
 #include <string>
 #include <memory>

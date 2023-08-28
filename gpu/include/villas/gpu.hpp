@@ -1,9 +1,9 @@
-/** GPU managment.
+/* GPU managment.
  *
  * Author: Daniel Krebs <github@daniel-krebs.net>
  * SPDX-FileCopyrightText: 2017 Institute for Automation of Complex Power Systems, EONERC
  * SPDX-License-Identifier: Apache-2.0
- *********************************************************************************/
+ */
 
 #pragma once
 
@@ -96,5 +96,5 @@ private:
 	Logger logger;
 };
 
-} /* namespace villas */
-} /* namespace gpu */
+} // namespace villas
+} // namespace gpu

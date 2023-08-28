@@ -1,9 +1,9 @@
-/** AXI PCIe bridge
+/* AXI PCIe bridge
  *
  * Author: Daniel Krebs <github@daniel-krebs.net>
  * SPDX-FileCopyrightText: 2018 Institute for Automation of Complex Power Systems, EONERC
  * SPDX-License-Identifier: Apache-2.0
- *********************************************************************************/
+ */
 
 #include <limits>
 #include <jansson.h>
