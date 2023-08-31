@@ -3,7 +3,7 @@
  * Author: Daniel Krebs <github@daniel-krebs.net>
  * Author: Steffen Vogel <post@steffenvogel.de>
  * Author: Niklas Eiling <niklas.eiling@eonerc.rwth-aachen.de>
- * SPDX-FileCopyrightText: 2018 Institute for Automation of Complex Power Systems, EONERC
+ * SPDX-FileCopyrightText: 2018 Institute for Automation of Complex Power Systems, RWTH Aachen University
  * SPDX-License-Identifier: Apache-2.0
  */
 

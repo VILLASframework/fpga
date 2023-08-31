@@ -3,7 +3,7 @@
  * Author: Daniel Krebs <github@daniel-krebs.net>
  * Author: Niklas Eiling <niklas.eiling@rwth-aachen.de>
  * SPDX-FileCopyrightText: 2017 Steffen Vogel <post@steffenvogel.de>
- * SPDX-FileCopyrightText: 2022 Niklas Eiling <niklas.eiling@eonerc.rwth-aachen.de>
+ * SPDX-FileCopyrightText: 2022-2023 Niklas Eiling <niklas.eiling@eonerc.rwth-aachen.de>
  * SPDX-License-Identifier: Apache-2.0
  */
 

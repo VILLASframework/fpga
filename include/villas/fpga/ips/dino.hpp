@@ -1,7 +1,7 @@
 /* Driver for wrapper around Dino
  *
  * Author: Steffen Vogel <svogel2@eonerc.rwth-aachen.de>
- * SPDX-FileCopyrightText: 2020 Institute for Automation of Complex Power Systems, EONERC
+ * SPDX-FileCopyrightText: 2020 Institute for Automation of Complex Power Systems, RWTH Aachen University
  * SPDX-License-Identifier: Apache-2.0
  */
 
