@@ -15,6 +15,8 @@
 #include <villas/fpga/ips/zynq.hpp>
 #include <villas/fpga/pcie_card.hpp>
 
+#include <villas/fpga/platform_card.hpp>
+
 
 using namespace villas::fpga::ip;
 
@@ -23,26 +25,58 @@ bool
 Zynq::init()
 {
 	auto &mm = MemoryManager::get();
+	auto platform_card = dynamic_cast<PlatformCard*>(card);
 
-	// Throw an exception if the is no bus master interface and thus no
-	// address space we can use for translation -> error
-
-	card->addrSpaceIdHostToDevice = mm.findAddressSpace("zynq_ultra_ps_e_0:M_AXI_HPM0_FPD");
-
-	// Map PCIe BAR0 via VFIO
-	const void* bar0_mapped = card->vfioDevice->regionMap(0);
-	if (bar0_mapped == MAP_FAILED) {
-		logger->error("Failed to mmap() BAR0");
-		return false;
+	// Map all vfio devices in card
+	std::map<std::shared_ptr<villas::kernel::vfio::Device>, const void*> device_map;
+	for (auto device : platform_card->devices)
+	{
+		const void* mapping = device->regionMap(0);
+		if (mapping == MAP_FAILED) {
+			logger->error("Failed to mmap() device");
+			return false;
+		}
+		logger->debug("memory mapped: {}", device->get_name());
+		device_map.insert({device, mapping});
 	}
 
+	// Create mappings from process space to vfio devices
 	const size_t mem_size = UINT64_MAX;
-
-	// Create a mapping from process address space to the FPGA card via vfio
 	size_t srcVertexId = mm.getProcessAddressSpace();
-	size_t targetVertexId = card->addrSpaceIdHostToDevice;
-	mm.createMapping(reinterpret_cast<uintptr_t>(bar0_mapped),
-					 0, mem_size, "vfio-h2d", srcVertexId, targetVertexId);
+	for (auto pair : device_map)
+	{
+		size_t targetVertexId = mm.getOrCreateAddressSpace(pair.first->get_name());
+		mm.createMapping(reinterpret_cast<uintptr_t>(pair.second),
+							0, mem_size, "vfio-h2d", srcVertexId, targetVertexId);
+		logger->debug("create edge from process to {}", pair.first->get_name());
+	}
+
+	//! Hardcoded edges vfios to ips
+	//? Solve Strat: search for name
+	// DMA
+	srcVertexId = mm.getOrCreateAddressSpace("a0000000.dma");
+	size_t targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0/Reg");
+	mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[0])),
+						0, mem_size, "vfio to ip", srcVertexId, targetVertexId);
+	
+	targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0:M_AXI_SG");
+	mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[0])),
+						0, mem_size, "vfio to ip", srcVertexId, targetVertexId);
+
+	// Switch
+	srcVertexId = mm.getOrCreateAddressSpace("a0010000.axis_switch");
+	targetVertexId = mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg");
+	mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[1])),
+						0, mem_size, "vfio to ip", srcVertexId, targetVertexId);
+	
+
+	// // Create a mapping from process address space to the FPGA card via vfio
+	// size_t srcVertexId = mm.getProcessAddressSpace();
+	// card->addrSpaceIdHostToDevice = mm.findAddressSpace("zynq_ultra_ps_e_0:M_AXI_HPM0_FPD");
+	// size_t targetVertexId = card->addrSpaceIdHostToDevice;
+	// const size_t mem_size = UINT64_MAX;
+	// mm.createMapping(reinterpret_cast<uintptr_t>(bar0_mapped),
+	// 				 0, mem_size, "vfio-h2d", srcVertexId, targetVertexId);
 
 
 	//! Dev
