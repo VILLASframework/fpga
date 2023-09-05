@@ -10,7 +10,7 @@
 
 #include <villas/fpga/card.hpp>
 #include <filesystem>
-#include <list>
+#include <vector>
 
 namespace villas {
 namespace fpga {
@@ -21,8 +21,8 @@ public:
         PlatformCard(std::shared_ptr<kernel::vfio::Container> vfioContainer);
         ~PlatformCard(){};
 
-private:
-        std::list<std::shared_ptr<kernel::vfio::Device>> devices;
+        std::vector<std::shared_ptr<kernel::vfio::Device>> devices;
+private:    
 
 };
 
