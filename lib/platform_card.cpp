@@ -19,42 +19,6 @@
 using namespace villas;
 using namespace villas::fpga;
 
-/* To investigate
-        -relation between vfio device and pci device
-        - vfio dev uses pci device as member
-        -> when is it accessed??
-
-*/
-
-/*  Report of dependencies to produce a minimal card example
-
-Factory in pcieCard:
-        card->name = std::string(card_name);
-        card->vfioContainer = vc;
-        card->affinity = affinity;
-        card->doReset = do_reset != 0;
-        card->polling = (polling != 0);
-        card->pdev
-        {
-        pciDevice* lookupPci
-        {
-                std::make_shared<Device>(id, slot)
-        }
-        }
-        card -> init()
-        {
-        vfioDevice = vfioContainer->attachDevice(pdev);
-        { IMPORTANT two implementations exist with overloaded
-parameters, PCI dev and some generic
-                >>> investigation <<<
-        }
-        vfioDevice->pciEnable()
-        }
-        card->ips = ip::CoreFactory::make(card.get(), json_ips);
-        + some messing with cores through getIp func
-*/
-
-// DMESG: xilinx-vdma a0000000.dma: Adding to iommu group 2
 
 PlatformCard::PlatformCard(
     std::shared_ptr<kernel::vfio::Container> vfioContainer)
@@ -73,8 +37,8 @@ PlatformCard::PlatformCard(
 			auto vfioDevice = std::make_shared<kernel::vfio::Device>(
 				DEVICE,
 				group->getFileDescriptor());
-			this->devices.push_back(vfioDevice);
 			group->attachDevice(vfioDevice);
+			this->devices.push_back(vfioDevice);
 		}
 
 		
