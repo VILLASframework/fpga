@@ -26,12 +26,12 @@ PlatformCard::PlatformCard(
         this->vfioContainer = vfioContainer;
         this->logger = villas::logging.get("PlatformCard");
 
-		// VFIO Group
+		// Create VFIO Group
         const int IOMMU_GROUP = 2;
         auto group = std::make_shared<kernel::vfio::Group>(IOMMU_GROUP, true);
         vfioContainer->attachGroup(group);
 
-		// VFIO Devices
+		// Open VFIO Devices
 		const char* DEVICES[] = {"a0000000.dma", "a0010000.axis_switch"};
 		for(const char* DEVICE : DEVICES){
 			auto vfioDevice = std::make_shared<kernel::vfio::Device>(
@@ -41,8 +41,30 @@ PlatformCard::PlatformCard(
 			this->devices.push_back(vfioDevice);
 		}
 
-		
-		this->vfioDevice = nullptr; //TODO: refactor
+		// Map all vfio devices in card to process
+		std::map<std::shared_ptr<villas::kernel::vfio::Device>, const void*> mapped_memory;
+		for (auto device : devices)
+		{
+			const void* mapping = device->regionMap(0);
+			if (mapping == MAP_FAILED) {
+				logger->error("Failed to mmap() device");
+			}
+			logger->debug("memory mapped: {}", device->getName());
+			mapped_memory.insert({device, mapping});
+		}
+
+		// Create mappings from process space to vfio devices
+		auto &mm = MemoryManager::get();
+		size_t srcVertexId = mm.getProcessAddressSpace();
+		for (auto pair : mapped_memory)
+		{
+			const size_t mem_size = pair.first->regionGetSize(0);
+			size_t targetVertexId = mm.getOrCreateAddressSpace(pair.first->getName());
+			mm.createMapping(reinterpret_cast<uintptr_t>(pair.second),
+								0, mem_size, "vfio-h2d", srcVertexId, targetVertexId);
+			logger->debug("create edge from process to {}", pair.first->getName());
+		}
+
 }
 
 std::list<std::shared_ptr<PlatformCard> >
