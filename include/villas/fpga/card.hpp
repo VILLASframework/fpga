@@ -26,7 +26,6 @@ public:
 	int affinity;					// Affinity for MSI interrupts
 	std::string name;			// The name of the FPGA card
         std::shared_ptr<kernel::vfio::Container> vfioContainer;
-        std::shared_ptr<kernel::vfio::Device> vfioDevice; //? Only used by intc
 
         // Slave address space ID to access the PCIe address space from the
         // FPGA
