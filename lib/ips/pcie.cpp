@@ -22,6 +22,8 @@ AxiPciExpressBridge::init()
 {
 	auto &mm = MemoryManager::get();
 
+	PCIeCard* card = dynamic_cast<PCIeCard*>(card);
+
 	// Throw an exception if the is no bus master interface and thus no
 	// address space we can use for translation -> error
 	card->addrSpaceIdHostToDevice = busMasterInterfaces.at(axiInterface);

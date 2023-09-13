@@ -19,10 +19,10 @@
 
 using namespace villas::fpga::ip;
 
-InterruptController::~InterruptController() {}
-
-bool InterruptController::stop() {
-  return card->vfioDevice->pciMsiDeinit(this->efds) > 0;
+InterruptController::~InterruptController()
+{
+	PCIeCard* card = dynamic_cast<PCIeCard*>(card);
+	card->vfioDevice->pciMsiDeinit(this->efds);
 }
 
 bool
@@ -30,6 +30,7 @@ InterruptController::init()
 {
 	const uintptr_t base = getBaseAddr(registerMemory);
 
+	PCIeCard* card = dynamic_cast<PCIeCard*>(card);
 	num_irqs = card->vfioDevice->pciMsiInit(efds);
 	if (num_irqs < 0)
 		return false;

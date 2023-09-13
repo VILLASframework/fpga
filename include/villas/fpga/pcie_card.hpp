@@ -62,6 +62,7 @@ public:
 
 public:	// TODO: make this private
 	std::shared_ptr<kernel::pci::Device> pdev;	// PCI device handle
+	std::shared_ptr<kernel::vfio::Device> vfioDevice; //? Only used by intc
 
 protected:
 	Logger
