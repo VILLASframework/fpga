@@ -27,56 +27,25 @@ Zynq::init()
 	auto &mm = MemoryManager::get();
 	auto platform_card = dynamic_cast<PlatformCard*>(card);
 
-	// Map all vfio devices in card
-	std::map<std::shared_ptr<villas::kernel::vfio::Device>, const void*> device_map;
-	for (auto device : platform_card->devices)
-	{
-		const void* mapping = device->regionMap(0);
-		if (mapping == MAP_FAILED) {
-			logger->error("Failed to mmap() device");
-			return false;
-		}
-		logger->debug("memory mapped: {}", device->get_name());
-		device_map.insert({device, mapping});
-	}
-
-	// Create mappings from process space to vfio devices
-	const size_t mem_size = UINT64_MAX;
-	size_t srcVertexId = mm.getProcessAddressSpace();
-	for (auto pair : device_map)
-	{
-		size_t targetVertexId = mm.getOrCreateAddressSpace(pair.first->get_name());
-		mm.createMapping(reinterpret_cast<uintptr_t>(pair.second),
-							0, mem_size, "vfio-h2d", srcVertexId, targetVertexId);
-		logger->debug("create edge from process to {}", pair.first->get_name());
-	}
-
 	//! Hardcoded edges vfios to ips
 	//? Solve Strat: search for name
 	// DMA
-	srcVertexId = mm.getOrCreateAddressSpace("a0000000.dma");
-	size_t targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0/Reg");
-	mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[0])),
-						0, mem_size, "vfio to ip", srcVertexId, targetVertexId);
+	// const size_t ip_mem_size = 65535;
+	// srcVertexId = mm.getOrCreateAddressSpace("a0000000.dma");
+	// size_t targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0/Reg");
+	// mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[0])),
+	// 					0, ip_mem_size, "vfio to ip", srcVertexId, targetVertexId);
 	
-	targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0:M_AXI_SG");
-	mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[0])),
-						0, mem_size, "vfio to ip", srcVertexId, targetVertexId);
+	// targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0:M_AXI_SG");
+	// mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[0])),
+	// 					0, ip_mem_size, "vfio to ip", srcVertexId, targetVertexId);
 
-	// Switch
-	srcVertexId = mm.getOrCreateAddressSpace("a0010000.axis_switch");
-	targetVertexId = mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg");
-	mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[1])),
-						0, mem_size, "vfio to ip", srcVertexId, targetVertexId);
-	
-
-	// // Create a mapping from process address space to the FPGA card via vfio
-	// size_t srcVertexId = mm.getProcessAddressSpace();
-	// card->addrSpaceIdHostToDevice = mm.findAddressSpace("zynq_ultra_ps_e_0:M_AXI_HPM0_FPD");
-	// size_t targetVertexId = card->addrSpaceIdHostToDevice;
-	// const size_t mem_size = UINT64_MAX;
-	// mm.createMapping(reinterpret_cast<uintptr_t>(bar0_mapped),
-	// 				 0, mem_size, "vfio-h2d", srcVertexId, targetVertexId);
+	// // Switch
+	// srcVertexId = mm.getOrCreateAddressSpace("a0010000.axis_switch");
+	// targetVertexId = mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg");
+	// mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[1])),
+	// 					0, ip_mem_size, "vfio to ip", srcVertexId, targetVertexId);
+	//! Hardcoded end
 
 
 	//! Dev
@@ -92,15 +61,26 @@ Zynq::init()
 	//         mm.getOrCreateAddressSpace(addrSpaceNameDeviceToHost);
 
 	// auto pciAddrSpaceId = mm.getPciAddressSpace();
-	// auto region = card->vfioDevice->regions[0];
-	// int region_num = 0
 
-	// auto pciBar = pcieToAxiTranslations.at("bar0");
+	// auto regions = dynamic_cast<PCIeCard*>(card)->pdev->getRegions();
 
-	// mm.createMapping(region.start, pciBar.translation, bar0_size,
-	// 					std::string("PCI-") + barName,
-	// 					pciAddrSpaceId, card->addrSpaceIdHostToDevice);
+	// int i = 0;
+	// for (auto region : regions) {
+	// 	const size_t region_size = region.end - region.start + 1;
 
+	// 	char barName[] = "BARx";
+	// 	barName[3] = '0' + region.num;
+	// 	auto pciBar = pcieToAxiTranslations.at(barName);
+
+	// 	logger->info("PCI-BAR{}: bus addr={:#x} size={:#x}",
+	// 	             region.num, region.start, region_size);
+	// 	logger->info("PCI-BAR{}: AXI translation offset {:#x}",
+	// 	             i, pciBar.translation);
+
+	// 	mm.createMapping(region.start, pciBar.translation, region_size,
+	// 	                 std::string("PCI-") + barName,
+	// 	                 pciAddrSpaceId, card->addrSpaceIdHostToDevice);
+	// }
 
 	// for (auto& [barName, axiBar] : axiToPcieTranslations) {
 	// 	logger->info("AXI-{}: bus addr={:#x} size={:#x}",
@@ -119,21 +99,6 @@ Zynq::init()
 
 	// 	i++;
 	// }
-	
-	// auto const baseaddr = 2684354560;
-    // auto const size = 65536;
-	// srcVertexId = mm.getProcessAddressSpace();
-	// targetVertexId = mm.findAddressSpace("zynq_ultra_ps_e_0/HPC1_DDR_LOW");
-	// mm.createMapping(baseaddr, 0, size,
-	// 	                 std::string("AXI-") + "BAR0",
-	// 	                 targetVertexId, srcVertexId);
-	
-	// auto const highaddr =  2684420095;
-	// srcVertexId = mm.getProcessAddressSpace();
-	// targetVertexId = mm.findAddressSpace("zynq_ultra_ps_e_0/HPC1_DDR_HIGH");
-	// mm.createMapping(highaddr, 0, size,
-	// 	                 std::string("AXI-") + "BAR0",
-	// 	                 targetVertexId, srcVertexId);
 
 	return true;
 }
