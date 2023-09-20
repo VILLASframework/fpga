@@ -24,8 +24,8 @@ using namespace villas::fpga::ip;
 bool
 Zynq::init()
 {
-	auto &mm = MemoryManager::get();
-	auto platform_card = dynamic_cast<PlatformCard*>(card);
+	// auto &mm = MemoryManager::get();
+	// auto platform_card = dynamic_cast<PlatformCard*>(card);
 
 	//! Hardcoded edges vfios to ips
 	//? Solve Strat: search for name
