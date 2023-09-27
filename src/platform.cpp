@@ -162,7 +162,8 @@ std::shared_ptr<fpga::PlatformCard>
 setupCard(const std::string &configFilePath, const std::string &fpgaName)
 {
         auto configDir = std::filesystem::path(configFilePath).parent_path();
-	auto vfioContainer = std::make_shared<kernel::vfio::Container>();
+        std::vector<std::string>  modules {"vfio"};
+	auto vfioContainer = std::make_shared<kernel::vfio::Container>(modules);
 
 	// Parse FPGA configuration
 	FILE* f = fopen(configFilePath.c_str(), "r");
