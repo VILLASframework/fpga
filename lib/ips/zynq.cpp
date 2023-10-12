@@ -24,83 +24,81 @@ using namespace villas::fpga::ip;
 bool
 Zynq::init()
 {
-	// auto &mm = MemoryManager::get();
-	// auto platform_card = dynamic_cast<PlatformCard*>(card);
+  auto &mm = MemoryManager::get();
+  // auto platform_card = dynamic_cast<PlatformCard*>(card);
 
-	//! Hardcoded edges vfios to ips
-	//? Solve Strat: search for name
-	// DMA
-	// const size_t ip_mem_size = 65535;
-	// srcVertexId = mm.getOrCreateAddressSpace("a0000000.dma");
-	// size_t targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0/Reg");
-	// mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[0])),
-	// 					0, ip_mem_size, "vfio to ip", srcVertexId, targetVertexId);
-	
-	// targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0:M_AXI_SG");
-	// mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[0])),
-	// 					0, ip_mem_size, "vfio to ip", srcVertexId, targetVertexId);
+  //! Hardcoded edges vfios to ips
+  //? Solve Strat: search for name
+  // DMA
+  const size_t ip_mem_size = 65535;
+  size_t srcVertexId = mm.getOrCreateAddressSpace("a0000000.dma");
+  size_t targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0/Reg");
+  mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
+                   targetVertexId);
 
-	// // Switch
-	// srcVertexId = mm.getOrCreateAddressSpace("a0010000.axis_switch");
-	// targetVertexId = mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg");
-	// mm.createMapping(reinterpret_cast<uintptr_t>(device_map.at(platform_card->devices[1])),
-	// 					0, ip_mem_size, "vfio to ip", srcVertexId, targetVertexId);
-	//! Hardcoded end
+  // Switch
+  srcVertexId = mm.getOrCreateAddressSpace("a0010000.axis_switch");
+  targetVertexId = mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg");
+  mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
+                   targetVertexId);
+  //! Hardcoded end
 
+  //mm.getGraph().removeVertex(mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg"));
 
-	//! Dev
-	// Make PCIe (IOVA) address space available to FPGA via BAR0
+  //! Dev
+  // Make PCIe (IOVA) address space available to FPGA via BAR0
 
-	// // IPs that can access this address space will know it via their memory view
-	// const auto addrSpaceNameDeviceToHost =
-	//         mm.getSlaveAddrSpaceName(getInstanceName(), pcieMemory);
+  // // IPs that can access this address space will know it via their memory
+  // view const auto addrSpaceNameDeviceToHost =
+  //         mm.getSlaveAddrSpaceName(getInstanceName(), pcieMemory);
 
-	// // Save ID in card so we can create mappings later when needed (e.g. when
-	// // allocating DMA memory in host RAM)
-	// card->addrSpaceIdDeviceToHost =
-	//         mm.getOrCreateAddressSpace(addrSpaceNameDeviceToHost);
+  // // Save ID in card so we can create mappings later when needed (e.g. when
+  // // allocating DMA memory in host RAM)
+  // card->addrSpaceIdDeviceToHost =
+  //         mm.getOrCreateAddressSpace(addrSpaceNameDeviceToHost);
 
-	// auto pciAddrSpaceId = mm.getPciAddressSpace();
+  // auto pciAddrSpaceId = mm.getPciAddressSpace();
 
-	// auto regions = dynamic_cast<PCIeCard*>(card)->pdev->getRegions();
+  // auto regions = dynamic_cast<PCIeCard*>(card)->pdev->getRegions();
 
-	// int i = 0;
-	// for (auto region : regions) {
-	// 	const size_t region_size = region.end - region.start + 1;
+  // int i = 0;
+  // for (auto region : regions) {
+  // 	const size_t region_size = region.end - region.start + 1;
 
-	// 	char barName[] = "BARx";
-	// 	barName[3] = '0' + region.num;
-	// 	auto pciBar = pcieToAxiTranslations.at(barName);
+  // 	char barName[] = "BARx";
+  // 	barName[3] = '0' + region.num;
+  // 	auto pciBar = pcieToAxiTranslations.at(barName);
 
-	// 	logger->info("PCI-BAR{}: bus addr={:#x} size={:#x}",
-	// 	             region.num, region.start, region_size);
-	// 	logger->info("PCI-BAR{}: AXI translation offset {:#x}",
-	// 	             i, pciBar.translation);
+  // 	logger->info("PCI-BAR{}: bus addr={:#x} size={:#x}",
+  // 	             region.num, region.start, region_size);
+  // 	logger->info("PCI-BAR{}: AXI translation offset {:#x}",
+  // 	             i, pciBar.translation);
 
-	// 	mm.createMapping(region.start, pciBar.translation, region_size,
-	// 	                 std::string("PCI-") + barName,
-	// 	                 pciAddrSpaceId, card->addrSpaceIdHostToDevice);
-	// }
+  // 	mm.createMapping(region.start, pciBar.translation, region_size,
+  // 	                 std::string("PCI-") + barName,
+  // 	                 pciAddrSpaceId, card->addrSpaceIdHostToDevice);
+  // }
 
-	// for (auto& [barName, axiBar] : axiToPcieTranslations) {
-	// 	logger->info("AXI-{}: bus addr={:#x} size={:#x}",
-	// 	             barName, axiBar.base, axiBar.size);
-	// 	logger->info("AXI-{}: PCI translation offset: {:#x}",
-	// 	             barName, axiBar.translation);
+  // for (auto& [barName, axiBar] : axiToPcieTranslations) {
+  // 	logger->info("AXI-{}: bus addr={:#x} size={:#x}",
+  // 	             barName, axiBar.base, axiBar.size);
+  // 	logger->info("AXI-{}: PCI translation offset: {:#x}",
+  // 	             barName, axiBar.translation);
 
-	// 	auto barXAddrSpaceName = mm.getSlaveAddrSpaceName(getInstanceName(), barName);
-	// 	auto barXAddrSpaceId = mm.getOrCreateAddressSpace(barXAddrSpaceName);
+  // 	auto barXAddrSpaceName = mm.getSlaveAddrSpaceName(getInstanceName(),
+  // barName); 	auto barXAddrSpaceId =
+  // mm.getOrCreateAddressSpace(barXAddrSpaceName);
 
-	// 	// Base is already incorporated into mapping of each IP by Vivado, so
-	// 	// the mapping src has to be 0
-	// 	mm.createMapping(0, axiBar.translation, axiBar.size,
-	// 	                 std::string("AXI-") + barName,
-	// 	                 barXAddrSpaceId, pciAddrSpaceId);
+  // 	// Base is already incorporated into mapping of each IP by Vivado, so
+  // 	// the mapping src has to be 0
+  // 	mm.createMapping(0, axiBar.translation, axiBar.size,
+  // 	                 std::string("AXI-") + barName,
+  // 	                 barXAddrSpaceId, pciAddrSpaceId);
 
-	// 	i++;
-	// }
+  // 	i++;
+  // }
 
-	return true;
+  return true;
 }
 
 void
