@@ -30,7 +30,7 @@ Zynq::init()
   //! Hardcoded edges vfios to ips
   //? Solve Strat: search for name
   // DMA
-  const size_t ip_mem_size = 65535;
+  const size_t ip_mem_size = 65536;
   size_t srcVertexId = mm.getOrCreateAddressSpace("a0000000.dma");
   size_t targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0/Reg");
   mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
