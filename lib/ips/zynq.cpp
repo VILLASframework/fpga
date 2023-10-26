@@ -28,6 +28,16 @@ Zynq::init()
   // auto platform_card = dynamic_cast<PlatformCard*>(card);
 
   //! Hardcoded edges vfios to ips
+
+  // IPs that can access this address space will know it via their memory view
+	const auto addrSpaceNameDeviceToHost =
+	        mm.getMasterAddrSpaceName("axi_dma_0", "M_AXI_SG");
+
+	// Save ID in card so we can create mappings later when needed (e.g. when
+	// allocating DMA memory in host RAM)
+	card->addrSpaceIdDeviceToHost =
+	        mm.getOrCreateAddressSpace(addrSpaceNameDeviceToHost);
+
   //? Solve Strat: search for name
   // DMA
   const size_t ip_mem_size = 65536;
@@ -41,6 +51,7 @@ Zynq::init()
   targetVertexId = mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg");
   mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
                    targetVertexId);
+
   //! Hardcoded end
 
   //mm.getGraph().removeVertex(mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg"));
