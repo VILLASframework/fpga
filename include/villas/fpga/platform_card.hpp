@@ -18,10 +18,12 @@ namespace fpga {
 class PlatformCard : public Card
 {
 public:
-        PlatformCard(std::shared_ptr<kernel::vfio::Container> vfioContainer);
-        ~PlatformCard(){};
+  PlatformCard(std::shared_ptr<kernel::vfio::Container> vfioContainer,
+               std::vector<std::string> device_names);
 
-        std::vector<std::shared_ptr<kernel::vfio::Device>> devices;
+  ~PlatformCard(){};
+
+  std::vector<std::shared_ptr<kernel::vfio::Device>> devices;
 private:    
 
 };

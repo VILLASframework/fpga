@@ -21,7 +21,9 @@ using namespace villas::fpga;
 
 
 PlatformCard::PlatformCard(
-    std::shared_ptr<kernel::vfio::Container> vfioContainer)
+    std::shared_ptr<kernel::vfio::Container> vfioContainer,
+	std::vector<std::string> device_names
+	)
 {
         this->vfioContainer = vfioContainer;
         this->logger = villas::logging.get("PlatformCard");
@@ -32,10 +34,9 @@ PlatformCard::PlatformCard(
         vfioContainer->attachGroup(group);
 
 		// Open VFIO Devices
-		const char* DEVICES[] = {"a0000000.dma", "a0010000.axis_switch"};
-		for(const char* DEVICE : DEVICES){
+		for(std::string device_name : device_names){
 			auto vfioDevice = std::make_shared<kernel::vfio::Device>(
-				DEVICE,
+				device_name,
 				group->getFileDescriptor());
 			group->attachDevice(vfioDevice);
 			this->devices.push_back(vfioDevice);
@@ -101,7 +102,10 @@ PlatformCardFactory::make(json_t *json,
 		if (ret != 0)
 			throw ConfigError(json_card, err, "", "Failed to parse card");
 
-		auto card = std::make_unique<PlatformCard>(vc);
+		//TODO: parse from json
+		std::vector<std::string> device_names{"a0000000.dma", "a0010000.axis_switch"};
+
+		auto card = std::make_unique<PlatformCard>(vc, device_names);
 
 		// Populate generic properties
 		card->name = std::string(card_name);
