@@ -215,7 +215,7 @@ int main()
 {
         logging.setLevel(spdlog::level::debug);
         
-        std::shared_ptr<PlatformCard> card = setupCard("/home/root/fpga/build/src/fpgas.json","PlatformCard");
+        std::shared_ptr<PlatformCard> card = setupCard("/home/root/fpga/build/src/fpgas.json","zcu106");
 
         auto dma = std::dynamic_pointer_cast<fpga::ip::Dma>(
             card->lookupIp(fpga::Vlnv("xilinx.com:ip:axi_dma:")));
