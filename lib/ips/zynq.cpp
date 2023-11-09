@@ -38,6 +38,18 @@ Zynq::init()
 	card->addrSpaceIdDeviceToHost =
 	        mm.getOrCreateAddressSpace(addrSpaceNameDeviceToHost);
 
+  /*
+  auto platform_card = dynamic_cast<PlatformCard*>(card);
+  for(auto vfio_device : platform_card->devices)
+  {
+    const size_t ip_mem_size = 65536;
+    size_t srcVertexId = mm.getOrCreateAddressSpace(DEVICE_TREE_NAME);
+    size_t targetVertexId = mm.getOrCreateAddressSpace(MEMORY_GRAPH_NAME/Reg);
+    mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
+                    targetVertexId);
+  }
+  */
+
   //? Solve Strat: search for name
   // DMA
   const size_t ip_mem_size = 65536;
