@@ -62,7 +62,7 @@ PlatformCard::PlatformCard(
 			const size_t mem_size = pair.first->regionGetSize(0);
 			size_t targetVertexId = mm.getOrCreateAddressSpace(pair.first->getName());
 			mm.createMapping(reinterpret_cast<uintptr_t>(pair.second),
-								0, mem_size, "vfio", srcVertexId, targetVertexId);
+								0, mem_size, "process to vfio", srcVertexId, targetVertexId);
 			logger->debug("create edge from process to {}", pair.first->getName());
 		}
 
