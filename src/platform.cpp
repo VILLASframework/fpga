@@ -1,3 +1,7 @@
+/**
+ * SPDX-FileCopyrightText: 2018 Institute for Automation of Complex Power Systems, EONERC
+ * SPDX-License-Identifier: Apache-2.0
+ *********************************************************************************/
 
 #include <exception>
 #include <jansson.h>
