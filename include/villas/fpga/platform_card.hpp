@@ -24,6 +24,9 @@ public:
   ~PlatformCard(){};
 
   std::vector<std::shared_ptr<kernel::vfio::Device>> devices;
+
+  bool mapMemoryBlock(const std::shared_ptr<MemoryBlock> block) override;
+
 private:    
 
 };
