@@ -65,7 +65,43 @@ PlatformCard::PlatformCard(
 								0, mem_size, "process to vfio", srcVertexId, targetVertexId);
 			logger->debug("create edge from process to {}", pair.first->getName());
 		}
+}
 
+bool PlatformCard::mapMemoryBlock(const std::shared_ptr<MemoryBlock> block) {
+  //! VFIO CONTAINER REPLACED BY DEVICES
+
+  if (not vfioContainer->isIommuEnabled()) {
+    logger->warn("VFIO mapping not supported without IOMMU");
+    return false;
+  }
+
+  auto &mm = MemoryManager::get();
+  const auto &addrSpaceId = block->getAddrSpaceId();
+
+  if (memoryBlocksMapped.find(addrSpaceId) != memoryBlocksMapped.end())
+    // Block already mapped
+    return true;
+  else
+    logger->debug("Create VFIO-Platform mapping for {}", addrSpaceId);
+
+  auto translationFromProcess = mm.getTranslationFromProcess(addrSpaceId);
+  uintptr_t processBaseAddr = translationFromProcess.getLocalAddr(0);
+  uintptr_t iovaAddr =
+      vfioContainer->memoryMap(processBaseAddr, UINTPTR_MAX, block->getSize());
+
+  if (iovaAddr == UINTPTR_MAX) {
+    logger->error("Cannot map memory at {:#x} of size {:#x}", processBaseAddr,
+                  block->getSize());
+    return false;
+  }
+
+  mm.createMapping(iovaAddr, 0, block->getSize(), "VFIO-D2H",
+                   this->addrSpaceIdDeviceToHost, addrSpaceId);
+
+  // Remember that this block has already been mapped for later
+  memoryBlocksMapped.insert({addrSpaceId, block});
+
+  return true;
 }
 
 std::list<std::shared_ptr<PlatformCard> >
