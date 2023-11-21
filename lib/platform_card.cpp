@@ -68,8 +68,6 @@ PlatformCard::PlatformCard(
 }
 
 bool PlatformCard::mapMemoryBlock(const std::shared_ptr<MemoryBlock> block) {
-  //! VFIO CONTAINER REPLACED BY DEVICES
-
   if (not vfioContainer->isIommuEnabled()) {
     logger->warn("VFIO mapping not supported without IOMMU");
     return false;
