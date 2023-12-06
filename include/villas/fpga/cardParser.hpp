@@ -1,3 +1,5 @@
+#pragma once
+
 #include "villas/exceptions.hpp"
 #include "villas/log.hpp"
 #include <jansson.h>
