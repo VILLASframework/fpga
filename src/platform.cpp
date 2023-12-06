@@ -30,31 +30,31 @@ void writeToDmaFromStdIn(std::shared_ptr<villas::fpga::ip::Dma> dma)
         logger->info(
             "Please enter values to write to the device, separated by ';'");
 
-        while(true) {
-                // Read values from stdin
-                std::string line;
-                std::getline(std::cin, line);
-                auto values = villas::utils::tokenize(line, ";");
 
-                size_t i = 0;
-                for(auto &value : values) {
-                        if(value.empty())
-                                continue;
+        // Read values from stdin
+        std::string line;
+        std::getline(std::cin, line);
+        auto values = villas::utils::tokenize(line, ";");
 
-                        const float number = std::stof(value);
-                        mem[i++] = number;
-                }
+        size_t i = 0;
+        for(auto &value : values) {
+                if(value.empty())
+                        continue;
 
-                // Initiate write transfer
-                bool state = dma->write(*block, i * sizeof(float));
-                if(!state)
-                        logger->error("Failed to write to device");
-
-                // auto writeComp = dma->writeComplete();
-                usleep(5 * SEC_IN_USEC); // some magic numbers
-
-                // logger->debug("Wrote {} bytes", writeComp.bytes);
+                const float number = std::stof(value);
+                mem[i++] = number;
         }
+
+        // Initiate write transfer
+        bool state = dma->write(*block, i * sizeof(float));
+        if(!state)
+                logger->error("Failed to write to device");
+
+        // auto writeComp = dma->writeComplete();
+        usleep(5 * SEC_IN_USEC); // some magic numbers
+
+        // logger->debug("Wrote {} bytes", writeComp.bytes);
+        
         // auto &alloc = villas::HostRam::getAllocator();
 
         // const std::shared_ptr<villas::MemoryBlock> block[] = {
@@ -162,7 +162,7 @@ void readFromDmaToStdOut(
 
 
 
-std::shared_ptr<fpga::PlatformCard>
+std::shared_ptr<fpga::Card>
 setupCard(const std::string &configFilePath, const std::string &fpgaName)
 {
         auto configDir = std::filesystem::path(configFilePath).parent_path();
@@ -199,7 +199,7 @@ setupCard(const std::string &configFilePath, const std::string &fpgaName)
 	// Create all FPGA card instances using the corresponding plugin
 	auto cards = PlatformCardFactory::make(fpgas, vfioContainer, configDir);
 
-	std::shared_ptr<fpga::PlatformCard> card;
+	std::shared_ptr<fpga::Card> card;
 	for (auto &fpgaCard : cards) {
 		if (fpgaCard->name == fpgaName) {
 			return fpgaCard;
@@ -219,7 +219,7 @@ int main()
 {
         logging.setLevel(spdlog::level::debug);
         
-        std::shared_ptr<PlatformCard> card = setupCard("/home/root/fpga/build/src/fpgas.json","zcu106");
+        std::shared_ptr<Card> card = setupCard("/home/root/fpga/build/src/fpgas.json","zcu106");
 
         auto dma = std::dynamic_pointer_cast<fpga::ip::Dma>(
             card->lookupIp(fpga::Vlnv("xilinx.com:ip:axi_dma:")));
