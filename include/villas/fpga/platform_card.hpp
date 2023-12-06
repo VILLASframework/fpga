@@ -34,7 +34,7 @@ private:
 class PlatformCardFactory
 {
 public:
-        static std::list<std::shared_ptr<PlatformCard>> make(json_t *json, 
+        static std::list<std::shared_ptr<Card>> make(json_t *json, 
                                         std::shared_ptr<kernel::vfio::Container> vc,
                                         const std::filesystem::path& searchPath);
 };
