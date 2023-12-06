@@ -16,6 +16,7 @@
 #include <villas/fpga/node.hpp>
 #include <villas/utils.hpp>
 #include <villas/fpga/cardParser.hpp>
+#include <villas/fpga/ipLoader.hpp>
 
 using namespace villas;
 using namespace villas::fpga;
@@ -130,26 +131,7 @@ PlatformCardFactory::make(json_t *json,
 			// 	continue;
 			// }
 
-			// Load IPs from a separate json file
-			if (!json_is_string(parser.json_ips)) {
-				logger->debug("FPGA IP cores config item is not a string.");
-				throw ConfigError(parser.json_ips, "node-config-fpga-ips", "FPGA IP cores config item is not a string.");
-			}
-			if (!searchPath.empty()) {
-				std::filesystem::path json_ips_path = searchPath / json_string_value(parser.json_ips);
-				logger->debug("searching for FPGA IP cors config at {}", json_ips_path);
-				parser.json_ips = json_load_file(json_ips_path.c_str(), 0, nullptr);
-			}
-			if (parser.json_ips == nullptr) {
-				parser.json_ips = json_load_file(json_string_value(parser.json_ips), 0, nullptr);
-				logger->debug("searching for FPGA IP cors config at {}", json_string_value(parser.json_ips));
-				if (parser.json_ips == nullptr) {
-					throw ConfigError(parser.json_ips, "node-config-fpga-ips", "Failed to find FPGA IP cores config");
-				}
-			}
-
-			if (not json_is_object(parser.json_ips))
-				throw ConfigError(parser.json_ips, "node-config-fpga-ips", "FPGA IP core list must be an object!");
+			IpLoader ipLoader(parser.json_ips, searchPath);
 
 			card->ips = ip::CoreFactory::make(card.get(), parser.json_ips);
 			if (card->ips.empty())
