@@ -15,8 +15,8 @@
 #include <villas/fpga/core.hpp>
 #include <villas/fpga/node.hpp>
 #include <villas/utils.hpp>
-#include <villas/fpga/cardParser.hpp>
-#include <villas/fpga/ipLoader.hpp>
+#include <villas/fpga/card_parser.hpp>
+#include <villas/fpga/ip_loader.hpp>
 
 using namespace villas;
 using namespace villas::fpga;
