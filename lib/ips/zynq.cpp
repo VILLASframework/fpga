@@ -37,32 +37,9 @@ Zynq::init()
 	// allocating DMA memory in host RAM)
 	card->addrSpaceIdDeviceToHost =
 	        mm.getOrCreateAddressSpace(addrSpaceNameDeviceToHost);
+  
+  dynamic_cast<PlatformCard*>(card)->connectVFIOtoIPS();
 
-  /*
-  auto platform_card = dynamic_cast<PlatformCard*>(card);
-  for(auto vfio_device : platform_card->devices)
-  {
-    const size_t ip_mem_size = 65536;
-    size_t srcVertexId = mm.getOrCreateAddressSpace(DEVICE_TREE_NAME);
-    size_t targetVertexId = mm.getOrCreateAddressSpace(MEMORY_GRAPH_NAME/Reg);
-    mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
-                    targetVertexId);
-  }
-  */
-
-  //? Solve Strat: search for name
-  // DMA
-  const size_t ip_mem_size = 65536;
-  size_t srcVertexId = mm.getOrCreateAddressSpace("a0000000.dma");
-  size_t targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0/Reg");
-  mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
-                   targetVertexId);
-
-  // Switch
-  srcVertexId = mm.getOrCreateAddressSpace("a0010000.axis_switch");
-  targetVertexId = mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg");
-  mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
-                   targetVertexId);
 
   //! Hardcoded end
 

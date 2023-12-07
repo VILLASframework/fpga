@@ -69,6 +69,31 @@ PlatformCard::PlatformCard(
 		}
 }
 
+void PlatformCard::connectVFIOtoIPS()
+{
+	auto &mm = MemoryManager::get();
+	const size_t ip_mem_size = 65536;
+	size_t srcVertexId = mm.getOrCreateAddressSpace("a0000000.dma");
+	size_t targetVertexId = mm.getOrCreateAddressSpace("axi_dma_0/Reg");
+	mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
+					targetVertexId);
+
+	// Switch
+	srcVertexId = mm.getOrCreateAddressSpace("a0010000.axis_switch");
+	targetVertexId = mm.getOrCreateAddressSpace("axis_interconnect_0_xbar/Reg");
+	mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
+					targetVertexId);
+
+	for(auto device : devices)
+	{
+		const size_t ip_mem_size = 65536;
+		size_t srcVertexId = mm.getOrCreateAddressSpace(device->getName());
+		size_t targetVertexId = mm.getOrCreateAddressSpace("MEMORY_GRAPH_NAME/Reg");
+		mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
+						targetVertexId);
+  	}
+}
+
 bool PlatformCard::mapMemoryBlock(const std::shared_ptr<MemoryBlock> block) {
   if (not vfioContainer->isIommuEnabled()) {
     logger->warn("VFIO mapping not supported without IOMMU");
