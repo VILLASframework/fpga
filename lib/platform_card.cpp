@@ -6,6 +6,7 @@
  * SPDX-FileCopyrightText: 2017 Institute for Automation of Complex Power
  *Systems, EONERC SPDX-License-Identifier: Apache-2.0
  *********************************************************************************/
+#include "villas/fpga/ips/dma.hpp"
 #include <jansson.h>
 #include <villas/fpga/platform_card.hpp>
 
@@ -84,14 +85,14 @@ void PlatformCard::connectVFIOtoIPS()
 	mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
 					targetVertexId);
 
-	for(auto device : devices)
-	{
-		const size_t ip_mem_size = 65536;
-		size_t srcVertexId = mm.getOrCreateAddressSpace(device->getName());
-		size_t targetVertexId = mm.getOrCreateAddressSpace("MEMORY_GRAPH_NAME/Reg");
-		mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
-						targetVertexId);
-  	}
+	// for(auto device : devices)
+	// {
+	// 	const size_t ip_mem_size = 65536;
+	// 	size_t srcVertexId = mm.getOrCreateAddressSpace(device->getName());
+	// 	size_t targetVertexId = mm.getOrCreateAddressSpace("MEMORY_GRAPH_NAME/Reg");
+	// 	mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
+	// 					targetVertexId);
+  	// }
 }
 
 bool PlatformCard::mapMemoryBlock(const std::shared_ptr<MemoryBlock> block) {
@@ -132,7 +133,7 @@ bool PlatformCard::mapMemoryBlock(const std::shared_ptr<MemoryBlock> block) {
 std::list<std::shared_ptr<Card>>
 PlatformCardFactory::make(json_t *json,
                           std::shared_ptr<kernel::vfio::Container> vc,
-						  const std::filesystem::path& searchPath)			  
+						  const std::filesystem::path& searchPath)
 {
 		std::list<std::shared_ptr<Card>> cards;
 		auto logger = villas::logging.get("PlatformCard");
@@ -156,7 +157,35 @@ PlatformCardFactory::make(json_t *json,
 			// 	continue;
 			// }
 
-			IpLoader ipLoader(parser.json_ips, searchPath);
+			// json_incref(parser.json_ips);
+			// IpLoader ipLoader(parser.json_ips, searchPath);
+
+			// Load IPs from a separate json file
+			if (!json_is_string(parser.json_ips)) {
+			logger->debug("FPGA IP cores config item is not a string.");
+			throw ConfigError(parser.json_ips, "node-config-fpga-ips",
+								"FPGA IP cores config item is not a string.");
+			}
+			if (!searchPath.empty()) {
+			std::filesystem::path json_ips_path =
+				searchPath / json_string_value(parser.json_ips);
+			logger->debug("searching for FPGA IP cors config at {}", json_ips_path);
+			parser.json_ips = json_load_file(json_ips_path.c_str(), 0, nullptr);
+			}
+			if (parser.json_ips == nullptr) {
+			parser.json_ips =
+				json_load_file(json_string_value(parser.json_ips), 0, nullptr);
+			logger->debug("searching for FPGA IP cors config at {}",
+							json_string_value(parser.json_ips));
+			if (parser.json_ips == nullptr) {
+				throw ConfigError(parser.json_ips, "node-config-fpga-ips",
+								"Failed to find FPGA IP cores config");
+			}
+			}
+
+			if (not json_is_object(parser.json_ips))
+			throw ConfigError(parser.json_ips, "node-config-fpga-ips",
+								"FPGA IP core list must be an object!");
 
 			card->ips = ip::CoreFactory::make(card.get(), parser.json_ips);
 			if (card->ips.empty())
