@@ -25,6 +25,7 @@ public:
 
   std::vector<std::shared_ptr<kernel::vfio::Device>> devices;
 
+  void connectVFIOtoIPS();
   bool mapMemoryBlock(const std::shared_ptr<MemoryBlock> block) override;
 
 private:    
