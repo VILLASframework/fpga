@@ -8,6 +8,7 @@
  *********************************************************************************/
 #include "villas/fpga/ips/dma.hpp"
 #include <jansson.h>
+#include <string>
 #include <villas/fpga/platform_card.hpp>
 
 #include <iostream>
@@ -32,7 +33,7 @@ PlatformCard::PlatformCard(
         this->logger = villas::logging.get("PlatformCard");
 
 		// Create VFIO Group
-        const int IOMMU_GROUP = 2;
+        const int IOMMU_GROUP = 2; //TODO: find Group
         auto group = std::make_shared<kernel::vfio::Group>(IOMMU_GROUP, true);
         vfioContainer->attachGroup(group);
 
@@ -85,14 +86,22 @@ void PlatformCard::connectVFIOtoIPS()
 	mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
 					targetVertexId);
 
-	// for(auto device : devices)
-	// {
+	for(auto device : devices)
+	{
+		std::string s = device->getName();
+		std::string delimiter = ".";
+		std::string address_string = s.substr(0, s.find(delimiter));
+		u64 address = std::stoll(address_string, 0, 16);
+		logger->info(address);
+
+
+
 	// 	const size_t ip_mem_size = 65536;
 	// 	size_t srcVertexId = mm.getOrCreateAddressSpace(device->getName());
 	// 	size_t targetVertexId = mm.getOrCreateAddressSpace("MEMORY_GRAPH_NAME/Reg");
 	// 	mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
 	// 					targetVertexId);
-  	// }
+  	}
 }
 
 bool PlatformCard::mapMemoryBlock(const std::shared_ptr<MemoryBlock> block) {
@@ -157,10 +166,9 @@ PlatformCardFactory::make(json_t *json,
 			// 	continue;
 			// }
 
-			// json_incref(parser.json_ips);
-			// IpLoader ipLoader(parser.json_ips, searchPath);
+			//IpLoader ipLoader(parser.json_ips, searchPath);
 
-			// Load IPs from a separate json file
+			//Load IPs from a separate json file
 			if (!json_is_string(parser.json_ips)) {
 			logger->debug("FPGA IP cores config item is not a string.");
 			throw ConfigError(parser.json_ips, "node-config-fpga-ips",
