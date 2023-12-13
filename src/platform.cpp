@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *********************************************************************************/
 
+#include "villas/fpga/ips/switch.hpp"
 #include <exception>
 #include <jansson.h>
 #include <unistd.h>
@@ -11,8 +12,6 @@
 #include <villas/fpga/platform_card.hpp>
 #include <villas/utils.hpp>
 #include <villas/fpga/utils.hpp>
-
-#define SEC_IN_USEC 1000 * 1000
 
 using namespace villas;
 using namespace fpga;
@@ -50,8 +49,7 @@ void writeToDmaFromStdIn(std::shared_ptr<villas::fpga::ip::Dma> dma)
         if(!state)
                 logger->error("Failed to write to device");
 
-        // auto writeComp = dma->writeComplete();
-        usleep(5 * SEC_IN_USEC); // some magic numbers
+        auto writeComp = dma->writeComplete();
 
         // logger->debug("Wrote {} bytes", writeComp.bytes);
         
@@ -215,6 +213,62 @@ setupCard(const std::string &configFilePath, const std::string &fpgaName)
 	return card;
 }
 
+int writeTest(std::shared_ptr<fpga::ip::Dma> dma){
+        auto &alloc = villas::HostRam::getAllocator();
+        const std::shared_ptr<villas::MemoryBlock> block
+                = alloc.allocateBlock(0x200 * sizeof(float));
+        villas::MemoryAccessor<float> mem = *block;
+        dma->makeAccesibleFromVA(block);
+
+        logger->info("Trying to write Values");
+
+        mem[0] = 1337;
+
+        // Itiate write transfer
+        bool state = dma->write(*block, 1 * sizeof(float));
+        if(!state)
+                logger->error("Failed to write to device");
+
+        volatile auto writeComp = dma->writeComplete();
+}
+
+int readTest(std::shared_ptr<fpga::ip::Dma> dma){
+        auto &alloc = villas::HostRam::getAllocator();
+
+        const std::shared_ptr<villas::MemoryBlock> block[]
+            = { alloc.allocateBlock(0x200 * sizeof(uint32_t)),
+                alloc.allocateBlock(0x200 * sizeof(uint32_t)) };
+
+        villas::MemoryAccessor<int32_t> mem[] = { *block[0], *block[1] };
+
+        for(auto b : block) {
+                dma->makeAccesibleFromVA(b);
+        }
+
+        // Setup read transfer
+        dma->read(*block[0], block[0]->getSize());
+
+        size_t cur = 0, next = 1;
+        while(true) {
+                logger->trace("Read from stream and write to address {}:{:p}",
+                              block[next]->getAddrSpaceId(),
+                              block[next]->getOffset());
+         
+                dma->read(*block[next], block[next]->getSize());
+
+                auto c = dma->readComplete();
+
+                logger->debug("bytes: {}, intrs: {}, bds: {}",
+                              c.bytes,
+                              c.interrupts,
+                              c.bds);
+
+                cur = next;
+                next = (next + 1) % (sizeof(mem) / sizeof(mem[0]));
+        }
+
+}
+
 int main()
 {
         logging.setLevel(spdlog::level::debug);
@@ -224,10 +278,13 @@ int main()
         auto dma = std::dynamic_pointer_cast<fpga::ip::Dma>(
             card->lookupIp(fpga::Vlnv("xilinx.com:ip:axi_dma:")));
 
-        // Write Test
-        writeToDmaFromStdIn(dma);
-        auto formatter = fpga::getBufferedSampleFormatter("short", 16);
-        readFromDmaToStdOut(dma, std::move(formatter));
+        auto axi_switch = std::dynamic_pointer_cast<fpga::ip::AxiStreamSwitch>(
+            card->lookupIp(fpga::Vlnv("xilinx.com:ip:axis_switch:")));
+
+        axi_switch->connectInternal("S00_AXIS", "M00_AXIS");
+
+        writeTest(dma);
+        //readTest(dma);
 
         return 0;
 }
