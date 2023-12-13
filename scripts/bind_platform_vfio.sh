@@ -16,4 +16,5 @@ echo vfio-platform > /sys/bus/platform/devices/a0000000.dma/driver_override
 echo a0000000.dma > /sys/bus/platform/drivers/vfio-platform/bind
 
 # Other vfio devices without driver override
+echo vfio-platform > /sys/bus/platform/devices/a0010000.axis_switch/driver_override
 echo a0010000.axis_switch > /sys/bus/platform/drivers_probe
