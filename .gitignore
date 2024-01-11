@@ -13,5 +13,5 @@ build/
 graph.dot
 
 .clang-format
-.cache
+.cache/
 miob/
