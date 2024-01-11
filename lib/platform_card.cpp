@@ -88,20 +88,13 @@ void PlatformCard::connectVFIOtoIPS()
 
 	for(auto device : devices)
 	{
-		std::string s = device->getName();
-		std::string delimiter = ".";
-		std::string address_string = s.substr(0, s.find(delimiter));
-		u64 address = std::stoll(address_string, 0, 16);
-		logger->info(address);
+		std::string addr;
+		std::string name;
 
-
-
-	// 	const size_t ip_mem_size = 65536;
-	// 	size_t srcVertexId = mm.getOrCreateAddressSpace(device->getName());
-	// 	size_t targetVertexId = mm.getOrCreateAddressSpace("MEMORY_GRAPH_NAME/Reg");
-	// 	mm.createMapping(0, 0, ip_mem_size, "vfio to ip", srcVertexId,
-	// 					targetVertexId);
-  	}
+		std::istringstream iss(device->getName());
+		std::getline(iss, addr, '.');
+		std::getline(iss, name, '.');
+	}
 }
 
 bool PlatformCard::mapMemoryBlock(const std::shared_ptr<MemoryBlock> block) {
