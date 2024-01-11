@@ -222,10 +222,10 @@ int writeTest(std::shared_ptr<fpga::ip::Dma> dma){
 
         logger->info("Trying to write Values");
 
-        mem[0] = 1337;
+        mem[0] = (float)1337;
 
         // Itiate write transfer
-        bool state = dma->write(*block, 1 * sizeof(float));
+        bool state = dma->write(*block, 0x200 * sizeof(float));
         if(!state)
                 logger->error("Failed to write to device");
 
