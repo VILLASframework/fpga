@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/src/villas-fpga-ctrl",
+            "program": "${workspaceFolder}/build/src/platform",
             "args": [
                 "-c", "${workspaceFolder}/etc/fpgas.json", "--connect", "\"2<->stdout\""
             ],

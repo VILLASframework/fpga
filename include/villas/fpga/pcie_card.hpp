@@ -61,13 +61,15 @@ public:
 	{ }
 
 public:	// TODO: make this private
-	bool doReset;					// Reset VILLASfpga during startup?
-	int affinity;					// Affinity for MSI interrupts
+	std::shared_ptr<kernel::pci::Device> pdev;	// PCI device handle
+	std::shared_ptr<kernel::vfio::Device> vfioDevice; //? Only used by intc
 
-        std::shared_ptr<kernel::pci::Device> pdev; // PCI device handle
-
-      protected:
-        Logger getLogger() const { return villas::logging.get(name); }
+protected:
+	Logger
+	getLogger() const
+	{
+		return villas::logging.get(name);
+	}
 };
 
 class PCIeCardFactory : public plugin::Plugin {
