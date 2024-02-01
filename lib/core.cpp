@@ -185,8 +185,6 @@ std::list<std::shared_ptr<Core>> CoreFactory::make(Card *card,
       // });
 
       std::vector<const char *> intc_names = {"mm2s_introut", "s2mm_introut"};
-
-      int num = 0;
       for (auto name : intc_names)
       {
         auto intc = new PlatformInterruptController();
@@ -195,11 +193,11 @@ std::list<std::shared_ptr<Core>> CoreFactory::make(Card *card,
 
         const char *irqName = name;
         std::string irqControllerName = "PlatformInterruptController";
+        int num = 0;
 
         logger->debug("IRQ: {} -> {}:{}", irqName, irqControllerName, num);
         ip->irqs[irqName] = {num, intc, ""};
 
-        num++;
       }
     }
 
