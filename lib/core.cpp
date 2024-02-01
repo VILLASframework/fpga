@@ -1,26 +1,29 @@
 /* FPGA IP component.
  *
  * Author: Steffen Vogel <post@steffenvogel.de>
- * SPDX-FileCopyrightText: 2017 Institute for Automation of Complex Power Systems, RWTH Aachen University
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-FileCopyrightText: 2017 Institute for Automation of Complex Power
+ * Systems, RWTH Aachen University SPDX-License-Identifier: Apache-2.0
  */
 
 #include <memory>
 #include <string>
 #include <utility>
 
+#include <vector>
 #include <villas/exceptions.hpp>
 #include <villas/log.hpp>
 #include <villas/memory.hpp>
 #include <villas/utils.hpp>
 
 #include <villas/fpga/card.hpp>
+#include <villas/fpga/platform_card.hpp>
 #include <villas/fpga/utils.hpp>
 #include <villas/fpga/vlnv.hpp>
 
 #include <villas/fpga/core.hpp>
 #include <villas/fpga/ips/intc.hpp>
 #include <villas/fpga/ips/pcie.hpp>
+#include <villas/fpga/ips/platform_intc.hpp>
 #include <villas/fpga/ips/switch.hpp>
 
 using namespace villas::fpga;
@@ -168,6 +171,35 @@ std::list<std::shared_ptr<Core>> CoreFactory::make(Card *card,
         }
         logger->debug("IRQ: {} -> {}:{}", irqName, irqControllerName, num);
         ip->irqs[irqName] = {num, intc, ""};
+      }
+    } else if (!json_is_object(json_irqs) &&
+               ip->getInstanceName().find("axi_dma_") != std::string::npos) {
+      logger->warn("Dma json does not contain an interrupt Controller. A "
+                   "Platform Interrupt controller will be added");
+
+      // auto devices = dynamic_cast<PlatformCard*>(ip->card)->devices;
+      // std::string nameToFind = "dma";
+      // auto it = std::find_if(devices.begin(), devices.end(), [&](const
+      // villas::kernel::vfio::Device& device) {
+      //     return device.get_name() == nameToFind;
+      // });
+
+      std::vector<const char *> intc_names = {"mm2s_introut", "s2mm_introut"};
+
+      int num = 0;
+      for (auto name : intc_names)
+      {
+        auto intc = new PlatformInterruptController();
+        intc->id = id;
+        intc->logger = villas::logging.get(id.getName());
+
+        const char *irqName = name;
+        std::string irqControllerName = "PlatformInterruptController";
+
+        logger->debug("IRQ: {} -> {}:{}", irqName, irqControllerName, num);
+        ip->irqs[irqName] = {num, intc, ""};
+
+        num++;
       }
     }
 
