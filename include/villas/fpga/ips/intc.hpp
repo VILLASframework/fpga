@@ -27,20 +27,20 @@ public:
 	virtual
 	bool init() override;
 
-	bool enableInterrupt(IrqMaskType mask, bool polling);
-	bool enableInterrupt(IrqPort irq, bool polling)
+	virtual bool enableInterrupt(IrqMaskType mask, bool polling);
+	virtual bool enableInterrupt(IrqPort irq, bool polling)
 	{
 		return enableInterrupt(1 << irq.num, polling);
 	}
 
-	bool disableInterrupt(IrqMaskType mask);
-	bool disableInterrupt(IrqPort irq)
+	virtual bool disableInterrupt(IrqMaskType mask);
+	virtual bool disableInterrupt(IrqPort irq)
 	{
 		return disableInterrupt(1 << irq.num);
 	}
 
-	int waitForInterrupt(int irq);
-	int waitForInterrupt(IrqPort irq)
+	virtual int waitForInterrupt(int irq);
+	virtual int waitForInterrupt(IrqPort irq)
 	{
 		return waitForInterrupt(irq.num);
 	}
