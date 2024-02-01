@@ -124,9 +124,8 @@ InterruptController::waitForInterrupt(int irq)
 {
 	assert(irq < maxIrqs);
 
-	const uintptr_t base = getBaseAddr(registerMemory);
-
 	if (this->polling[irq]) {
+		const uintptr_t base = getBaseAddr(registerMemory);
 		uint32_t isr, mask = 1 << irq;
 
 		do {
