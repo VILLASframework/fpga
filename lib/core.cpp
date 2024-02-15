@@ -185,24 +185,22 @@ std::list<std::shared_ptr<Core>> CoreFactory::make(Card *card,
       // });
 
       //! TODO: Order of interrupts is hardcoded and not tested (may be reversed). Aviable in vfio device irq.id .
+      auto intc = new PlatformInterruptController();
+      intc->id = id;
+      intc->logger = villas::logging.get(id.getName());
+      intc->card = card;
+
       std::vector<const char *> intc_names = {"mm2s_introut", "s2mm_introut"};
       int num = 0;
       for (auto name : intc_names)
       {
-        auto intc = new PlatformInterruptController();
-        intc->id = id;
-        intc->logger = villas::logging.get(id.getName());
-        intc->card = card;
-        intc->init();
-
-        const char *irqName = name;
         std::string irqControllerName = "PlatformInterruptController";
-
-        logger->debug("IRQ: {} -> {}:{}", irqName, irqControllerName, num);
-        ip->irqs[irqName] = {num, intc, ""};
-
+        logger->debug("IRQ: {} -> {}:{}", std::string(name), irqControllerName, num);
+        ip->irqs[std::string(name)] = {num, intc, ""};
         num++;
       }
+      
+      intc->init();
     }
 
     json_t *json_memory_view = json_object_get(json_ip, "memory-view");
