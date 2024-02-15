@@ -192,6 +192,8 @@ std::list<std::shared_ptr<Core>> CoreFactory::make(Card *card,
         auto intc = new PlatformInterruptController();
         intc->id = id;
         intc->logger = villas::logging.get(id.getName());
+        intc->card = card;
+        intc->init();
 
         const char *irqName = name;
         std::string irqControllerName = "PlatformInterruptController";
