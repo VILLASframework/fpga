@@ -45,7 +45,7 @@ public:
 		return waitForInterrupt(irq.num);
 	}
 
-private:
+protected:
 
 	static constexpr char registerMemory[] = "reg0";
 
