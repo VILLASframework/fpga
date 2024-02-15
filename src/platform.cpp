@@ -6,6 +6,7 @@
 #include "villas/fpga/ips/switch.hpp"
 #include <exception>
 #include <jansson.h>
+#include <spdlog/common.h>
 #include <unistd.h>
 #include <villas/exceptions.hpp>
 #include <villas/fpga/ips/dma.hpp>
@@ -164,7 +165,8 @@ setupCard(const std::string &configFilePath, const std::string &fpgaName)
 
 int main()
 {
-        logging.setLevel(spdlog::level::debug);
+        logging.setLevel(spdlog::level::trace);
+        logger->set_level(spdlog::level::trace);
         
         std::shared_ptr<Card> card = setupCard("/home/root/fpga/build/src/fpgas.json","zcu106");
 
