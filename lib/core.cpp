@@ -177,13 +177,6 @@ std::list<std::shared_ptr<Core>> CoreFactory::make(Card *card,
       logger->warn("Dma json does not contain an interrupt Controller. A "
                    "Platform Interrupt controller will be added");
 
-      // auto devices = dynamic_cast<PlatformCard*>(ip->card)->devices;
-      // std::string nameToFind = "dma";
-      // auto it = std::find_if(devices.begin(), devices.end(), [&](const
-      // villas::kernel::vfio::Device& device) {
-      //     return device.get_name() == nameToFind;
-      // });
-
       //! TODO: Order of interrupts is hardcoded and not tested (may be reversed). Aviable in vfio device irq.id .
       auto intc = new PlatformInterruptController();
       intc->id = id;
