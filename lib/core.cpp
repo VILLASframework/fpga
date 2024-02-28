@@ -172,8 +172,7 @@ std::list<std::shared_ptr<Core>> CoreFactory::make(Card *card,
         logger->debug("IRQ: {} -> {}:{}", irqName, irqControllerName, num);
         ip->irqs[irqName] = {num, intc, ""};
       }
-    } else if (!json_is_object(json_irqs) &&
-               ip->getInstanceName().find("axi_dma_") != std::string::npos) {
+    } else if (ip->getInstanceName().find("axi_dma_") != std::string::npos) {
       logger->warn("Dma json does not contain an interrupt Controller. A "
                    "Platform Interrupt controller will be added");
 
